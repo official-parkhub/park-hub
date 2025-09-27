@@ -1,6 +1,5 @@
 FROM astral/uv:python3.12-bookworm-slim
 
-# Install PostgreSQL client libraries
 RUN apt-get update && apt-get install -y \
   libpq-dev
 
