@@ -38,6 +38,7 @@ class RequestContext:
         self.request = request
         self.response = response
 
+
 class RequestContextUser:
     def __init__(self, rc: RequestContext):
         self.rc = rc

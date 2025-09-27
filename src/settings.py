@@ -4,6 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from src.path import ROOT_DIR
 
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_ignore_empty=True)
     # API
@@ -37,6 +38,7 @@ class Settings(BaseSettings):
         host = self.postgres_host
         port = self.postgres_port
         return f"postgresql+psycopg://{user}:{password}@{host}:{port}/{database}"
+
 
 ENV_FILE = ROOT_DIR / "env/.env"
 SETTINGS = Settings(_env_file=ENV_FILE)

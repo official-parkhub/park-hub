@@ -9,7 +9,13 @@ class ApplicationError(Exception):
     KIND = "APPLICATION_ERROR"
     STATUS_CODE = 400
 
-    def __init__(self, *, message: str | None = None, data: Any | None = None, should_rollback: bool = True):
+    def __init__(
+        self,
+        *,
+        message: str | None = None,
+        data: Any | None = None,
+        should_rollback: bool = True,
+    ):
         self.message = message
         self.data = data
         self.should_rollback = should_rollback
@@ -20,7 +26,9 @@ class ApplicationError(Exception):
             content["message"] = self.message
         if self.data:
             content["data"] = self.data
-        return JSONResponse(status_code=self.STATUS_CODE, content=jsonable_encoder(content))
+        return JSONResponse(
+            status_code=self.STATUS_CODE, content=jsonable_encoder(content)
+        )
 
 
 class UnavailableResource(ApplicationError):

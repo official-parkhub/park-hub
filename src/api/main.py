@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from src.api.core import create_core_app
+
 # from app.modules import models
 from src.settings import SETTINGS
 

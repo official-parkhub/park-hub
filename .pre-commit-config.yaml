@@ -1,0 +1,21 @@
+exclude: ^docs/
+
+repos:
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.9.9
+  hooks:
+  # Lint code
+  - id: ruff
+    args: [ --fix ]
+  # Format code
+  - id: ruff-format
+
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.1.0
+  hooks:
+  - id: check-merge-conflict
+  - id: end-of-file-fixer
+  - id: check-yaml
+  - id: trailing-whitespace
+  - id: check-added-large-files
+  - id: check-toml

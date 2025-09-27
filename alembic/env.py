@@ -20,7 +20,9 @@ if config.config_file_name is not None:
 target_metadata = Base.metadata
 assert models, "models must be imported to register the models with SQLAlchemy"
 
-alembic_postgresql_enum.set_configuration(alembic_postgresql_enum.Config(add_type_ignore=True))
+alembic_postgresql_enum.set_configuration(
+    alembic_postgresql_enum.Config(add_type_ignore=True)
+)
 
 
 def include_object(object, name, type_, reflected, compare_to):
@@ -76,7 +78,9 @@ def run_migrations_online() -> None:
 
         with context.begin_transaction():
             context.get_context()._ensure_version_table()
-            connection.execute(text("LOCK TABLE alembic_version IN ACCESS EXCLUSIVE MODE"))
+            connection.execute(
+                text("LOCK TABLE alembic_version IN ACCESS EXCLUSIVE MODE")
+            )
             context.run_migrations()
 
 
