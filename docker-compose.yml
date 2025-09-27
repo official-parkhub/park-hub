@@ -7,3 +7,15 @@ services:
       - "5432:5432"
     volumes:
       - ./.tmp/volumes/pg:/var/lib/postgresql/data
+
+  api:
+    restart: unless-stopped
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./alembic:/app/alembic
+      - ./alembic.ini:/app/alembic.ini
+      - ./src:/app/src
+    env_file:
+      - env/.env
