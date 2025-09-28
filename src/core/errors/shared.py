@@ -77,3 +77,11 @@ class ResourceNotFound(ApplicationError):
 
     def __init__(self, *, message: str = None, should_rollback: bool = True):
         super().__init__(message=message, should_rollback=should_rollback)
+
+
+class AuthenticationError(ApplicationError):
+    KIND = "AUTHENTICATION_ERROR"
+    STATUS_CODE = 401
+
+    def __init__(self, *, message: str = None, should_rollback: bool = True):
+        super().__init__(message=message, should_rollback=should_rollback)

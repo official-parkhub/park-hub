@@ -1,5 +1,6 @@
 from api.routers.health import router as health_router
 from src.modules.driver.routers.customer import router as customer_router
+from src.modules.shared.routers import router as shared_router
 
 from fastapi import APIRouter, FastAPI
 from fastapi.responses import RedirectResponse
@@ -12,6 +13,7 @@ def add_routers(base_router: FastAPI | APIRouter):
     routers = [
         health_router,
         customer_router,
+        shared_router,
     ]
     for r in routers:
         base_router.include_router(r)

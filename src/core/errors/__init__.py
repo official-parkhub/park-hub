@@ -6,6 +6,7 @@ from .shared import (
     ResourceAlreadyExists,
     ResourceNotFound,
     UnavailableResource,
+    AuthenticationError,
 )
 
 __all__ = [
@@ -17,4 +18,5 @@ __all__ = [
     "ResourceAlreadyExists",
     "ResourceNotFound",
     "UnavailableResource",
+    "AuthenticationError",
 ]
