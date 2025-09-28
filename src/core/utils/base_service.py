@@ -1,4 +1,4 @@
-from app.core.utils.request_context import RequestContext, RequestContextUser
+from src.core.utils.request_context import RequestContext, RequestContextUser
 
 
 class BaseService(RequestContextUser):
