@@ -4,12 +4,14 @@ from fastapi import FastAPI
 
 from src.api.core import create_core_app
 
-# from app.modules import models
+from src.modules import models
 from src.settings import SETTINGS
+
+from loguru import logger
 
 # Ensure models are imported to register them with SQLAlchemy
 # 'assert models' is used to avoid unused import warnings
-# assert models
+assert models
 
 
 @asynccontextmanager
@@ -18,7 +20,7 @@ async def lifespan(app: FastAPI):
     if SETTINGS.feat_enable_core_docs:
         core_docs_url = f"http://127.0.0.1:{SETTINGS.api_port}/api/core/docs"
 
-    print(f"Core API documentation: {core_docs_url}")
+    logger.info(f"Core API documentation: {core_docs_url}")
     yield
 
 
