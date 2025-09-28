@@ -19,3 +19,15 @@ services:
       - ./src:/app/src
     env_file:
       - env/.env
+
+  pgadmin:
+    image: dpage/pgadmin4:9.8
+    env_file:
+      - env/.env
+    user: root
+    ports:
+      - "5050:80"
+    volumes:
+      - ./.pgadmin/volumes/pgadmin:/var/lib/pgadmin
+    depends_on:
+      - postgres
