@@ -33,7 +33,6 @@ services:
       - postgres
 
   localstack:
-    container_name: hirable.localstack
     image: localstack/localstack
     ports:
       - "127.0.0.1:4566:4566"
