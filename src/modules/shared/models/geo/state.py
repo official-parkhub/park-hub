@@ -3,6 +3,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.database.audit import AuditMixin
 from src.core.database.base import Base
+from src.modules.company.models.organization import Organization
 from src.modules.shared.enums.country import Country
 from src.modules.shared.models.geo.city import City
 
@@ -21,3 +22,4 @@ class State(Base, AuditMixin):
     __table_args__ = (UniqueConstraint("country", "iso2_code"),)
 
     cities: Mapped[list[City]] = relationship(back_populates="state")
+    organizations: Mapped[list["Organization"]] = relationship(back_populates="state")
