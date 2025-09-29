@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING
 
 import uuid
 
+from src.modules.company.models.organization import Organization
+
 if TYPE_CHECKING:
     from src.modules.driver.models.customer import Customer
 
@@ -20,3 +22,6 @@ class User(Base, AuditMixin):
     password_hash: Mapped[str] = mapped_column()
 
     customer: Mapped["Customer"] = relationship(back_populates="user", lazy="joined")
+    organization: Mapped["Organization"] = relationship(
+        back_populates="user", lazy="joined", uselist=False
+    )
