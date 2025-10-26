@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import uuid
 
 from src.modules.company.schemas.organization import OrganizationSchema
@@ -14,11 +14,11 @@ class BaseCompanyImageSchema(BaseModel):
 
 
 class BaseParkingPriceSchema(BaseModel):
-    start_hour: int
-    end_hour: int
-    price_cents: int
+    start_hour: int = Field(..., ge=0, le=23)
+    end_hour: int = Field(..., ge=0, le=23)
+    price_cents: int = Field(..., ge=0)
     is_discount: bool
-    week_day: int | None = None
+    week_day: int = Field(..., ge=0, le=6)
 
 
 class ParkingPriceWithIDSchema(BaseParkingPriceSchema):

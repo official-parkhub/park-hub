@@ -7,6 +7,7 @@ from src.modules.company.routers.company import (
     image_router as company_image_router,
 )
 from src.modules.shared.routers.geo import router as geo_router
+from src.modules.company.routers.company_price import router as company_price_router
 
 from fastapi import APIRouter, FastAPI
 from fastapi.responses import RedirectResponse
@@ -23,6 +24,7 @@ def add_routers(base_router: FastAPI | APIRouter):
         organization_router,
         company_router,
         company_image_router,
+        company_price_router,
         geo_router,
     ]
     for r in routers:

@@ -10,7 +10,7 @@ import uuid
 
 if TYPE_CHECKING:
     from src.modules.shared.models.user.user import User
-    from src.modules.company.models.state import State
+    from src.modules.shared.models.geo.state import State
     from src.modules.company.models.company import Company
 
 
