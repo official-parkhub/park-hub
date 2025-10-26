@@ -29,6 +29,7 @@ class ParkingException(Base, AuditMixin):
     start_hour: Mapped[int] = mapped_column(nullable=False)
     end_hour: Mapped[int] = mapped_column(nullable=False)
     price_cents: Mapped[int] = mapped_column(nullable=False)
+    description: Mapped[str | None] = mapped_column(nullable=True)
 
     is_discount: Mapped[bool] = mapped_column(default=False, nullable=False)
 

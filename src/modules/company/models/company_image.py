@@ -21,10 +21,10 @@ class CompanyImage(Base, AuditMixin):
 
     active: Mapped[bool] = mapped_column(default=True, nullable=False)
 
+    key: Mapped[str] = mapped_column(nullable=False)
     company_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("company.id"), nullable=False
     )
-    image_url: Mapped[str] = mapped_column(nullable=False)
     is_primary: Mapped[bool] = mapped_column(default=False, nullable=False)
 
     company: Mapped["Company"] = relationship(back_populates="images", lazy="joined")

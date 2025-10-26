@@ -30,6 +30,12 @@ class Settings(BaseSettings):
     # SQLAlchemy
     sqlalchemy_echo: bool = False
 
+    # S3 Storage
+    aws_access_key_id: str
+    aws_secret_access_key: str
+    aws_region: str = "us-east-1"
+    aws_s3_endpoint: str | None = None
+
     @property
     def sqlalchemy_url(self):
         user = quote_plus(self.postgres_user)

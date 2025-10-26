@@ -2,7 +2,10 @@ from api.routers.health import router as health_router
 from src.modules.driver.routers.customer import router as customer_router
 from src.modules.shared.routers.login import router as login_router
 from src.modules.company.routers import router as organization_router
-from src.modules.company.routers.company import router as company_router
+from src.modules.company.routers.company import (
+    router as company_router,
+    image_router as company_image_router,
+)
 from src.modules.shared.routers.geo import router as geo_router
 
 from fastapi import APIRouter, FastAPI
@@ -19,6 +22,7 @@ def add_routers(base_router: FastAPI | APIRouter):
         login_router,
         organization_router,
         company_router,
+        company_image_router,
         geo_router,
     ]
     for r in routers:

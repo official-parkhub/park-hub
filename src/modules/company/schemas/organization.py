@@ -1,6 +1,8 @@
 from pydantic import BaseModel, Field
 import uuid
 
+from src.modules.shared.schemas.state import StateWithIDSchema
+
 
 class OrganizationCreateSchema(BaseModel):
     name: str = Field(
@@ -21,3 +23,7 @@ class OrganizationResponseSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class OrganizationSchema(OrganizationResponseSchema):
+    state: StateWithIDSchema

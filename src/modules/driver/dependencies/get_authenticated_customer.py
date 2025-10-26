@@ -8,7 +8,7 @@ async def _get_authenticated_customer(
     User: DepCurrentUser,
 ) -> Customer:
     if not User.customer:
-        raise errors.NotFoundError(message="Authenticated customer not found")
+        raise errors.ResourceNotFound(message="Authenticated customer not found")
 
     return User.customer
 
