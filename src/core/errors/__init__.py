@@ -8,6 +8,7 @@ from .shared import (
     UnavailableResource,
     AuthenticationError,
     InternalServerError,
+    AuthorizationError,
 )
 
 __all__ = [
@@ -21,4 +22,5 @@ __all__ = [
     "UnavailableResource",
     "AuthenticationError",
     "InternalServerError",
+    "AuthorizationError",
 ]

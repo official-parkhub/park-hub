@@ -21,6 +21,8 @@ class User(Base, AuditMixin):
     email: Mapped[str] = mapped_column(unique=True, index=True)
     password_hash: Mapped[str] = mapped_column()
 
+    is_admin: Mapped[bool] = mapped_column(default=False)
+
     customer: Mapped["Customer"] = relationship(back_populates="user", lazy="joined")
     organization: Mapped["Organization"] = relationship(
         back_populates="user", lazy="joined", uselist=False

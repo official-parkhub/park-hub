@@ -3,6 +3,7 @@ from src.modules.driver.routers.customer import router as customer_router
 from src.modules.shared.routers.login import router as login_router
 from src.modules.company.routers import router as organization_router
 from src.modules.company.routers.company import router as company_router
+from src.modules.shared.routers.geo import router as geo_router
 
 from fastapi import APIRouter, FastAPI
 from fastapi.responses import RedirectResponse
@@ -18,6 +19,7 @@ def add_routers(base_router: FastAPI | APIRouter):
         login_router,
         organization_router,
         company_router,
+        geo_router,
     ]
     for r in routers:
         base_router.include_router(r)

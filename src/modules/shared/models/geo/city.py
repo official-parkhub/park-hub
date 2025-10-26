@@ -25,7 +25,5 @@ class City(Base, AuditMixin):
     state_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("state.id"))
     name: Mapped[str]
 
-    identification_code: Mapped[str | None]
-
     state: Mapped[State | None] = relationship(back_populates="cities", lazy="joined")
     companies: Mapped[list["Company"]] = relationship(back_populates="city")

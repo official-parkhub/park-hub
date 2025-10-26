@@ -98,3 +98,11 @@ class InternalServerError(ApplicationError):
         should_rollback: bool = True,
     ):
         super().__init__(message=message, should_rollback=should_rollback)
+
+
+class AuthorizationError(ApplicationError):
+    KIND = "AUTHORIZATION_ERROR"
+    STATUS_CODE = 403
+
+    def __init__(self, *, message: str = None, should_rollback: bool = True):
+        super().__init__(message=message, should_rollback=should_rollback)
