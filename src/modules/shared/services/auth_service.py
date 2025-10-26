@@ -24,7 +24,7 @@ class AuthService(BaseService):
     def __init__(self, rc: RequestContext):
         super().__init__(rc)
 
-    async def authenticate_user(self, email: str, password: str) -> User:
+    async def authenticate_user(self, email: str, password: str) -> LoginResponseSchema:
         result = await self.db.execute(select(User).where(User.email == email))
         user = result.scalars().first()
 

@@ -1,4 +1,5 @@
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from src.core import errors
 from src.core.data.password import get_password_hash
@@ -17,7 +18,14 @@ class UserService(BaseService):
         super().__init__(rc)
 
     async def get_user_by_id(self, id: str) -> User:
-        result = await self.db.execute(select(User).where(User.id == id))
+        result = await self.db.execute(
+            select(User)
+            .where(User.id == id)
+            .options(
+                selectinload(User.customer),
+                selectinload(User.organization),
+            )
+        )
         user = result.scalars().first()
 
         if not user:

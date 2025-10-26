@@ -95,6 +95,61 @@ Siga estas instruções para ter o projeto rodando em seu ambiente local para de
 
 ---
 
+### Instalação do pre-commit
+
+Este projeto utiliza o `pre-commit` para garantir a formatação do código antes de cada commit. Para instalá-lo e configurá-lo no repositório, execute:
+
+```bash
+uvx pre-commit install
+```
+
+### Instalação Local com Ambiente Virtual
+
+Para melhorar a experiência de desenvolvimento, especialmente no uso de IntelliSense na IDE, é recomendável instalar as dependências localmente:
+
+1. Sincronize as dependências:
+   ```bash
+   uv sync
+   ```
+
+2. Ative o ambiente virtual:
+   ```bash
+   source .venv/bin/activate
+   ```
+
+3. Configure o ambiente virtual na sua IDE. No caso do VSCode:
+   - Abra a Command Palette (Ctrl+Shift+P).
+   - Pesquise por **Python: Select Interpreter**.
+   - Escolha **Enter Interpreter Path** e insira `.venv/bin/python`.
+
+### Desenvolvimento com Docker
+
+Para configurar e executar a aplicação dentro de containers Docker:
+
+1. Construa e inicie os containers:
+   ```bash
+   docker compose up -d
+   ```
+
+## Banco de Dados
+
+A aplicação utiliza PostgreSQL como banco de dados. A execução do banco é feita preferencialmente via Docker Compose.
+
+### Inicializando o Banco de Dados
+
+Para iniciar o banco de dados:
+```bash
+docker compose up -d postgres
+```
+
+Caso seja a primeira execução ou você precise limpar todos os dados:
+```bash
+sudo rm -rf .tmp/volumes/pg/
+sudo docker compose up -d --force-recreate postgres
+sleep 2s
+sudo docker compose run --rm api alembic upgrade head
+```
+
 ## 🗄️ Migrations com Alembic
 
 Para gerenciar as alterações no schema do banco de dados, utilizamos o Alembic.

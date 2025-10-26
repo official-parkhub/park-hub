@@ -20,6 +20,15 @@ class CustomerService(BaseService):
             raise errors.ResourceNotFound(message="Customer not found")
         return customer
 
+    async def get_customer_by_user_id(self, user_id: str):
+        result = await self.db.execute(
+            select(Customer).where(Customer.user_id == user_id)
+        )
+        customer = result.scalars().first()
+        if not customer:
+            raise errors.ResourceNotFound(message="Customer not found")
+        return customer
+
     async def create_customer(
         self,
         user_id: str,

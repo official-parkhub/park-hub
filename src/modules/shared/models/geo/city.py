@@ -12,6 +12,7 @@ from src.modules.shared.enums.country import Country
 import uuid
 
 if TYPE_CHECKING:
+    from src.modules.company.models.company import Company
     from src.modules.shared.models.geo.state import State
 
 
@@ -27,3 +28,4 @@ class City(Base, AuditMixin):
     identification_code: Mapped[str | None]
 
     state: Mapped[State | None] = relationship(back_populates="cities", lazy="joined")
+    companies: Mapped[list["Company"]] = relationship(back_populates="city")

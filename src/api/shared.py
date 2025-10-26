@@ -29,3 +29,8 @@ def add_exception_handlers(app: FastAPI):
     @app.exception_handler(errors.ApplicationError)
     async def _(request: Request, exc: errors.ApplicationError):
         return exc.to_fastapi_response()
+
+    @app.exception_handler(Exception)
+    async def _(request: Request, exc: Exception):
+        generic_error = errors.InternalServerError()
+        return generic_error.to_fastapi_response()
