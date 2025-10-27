@@ -15,10 +15,14 @@ from src.modules.company.models.company import Company
 from src.modules.company.models.company_image import CompanyImage
 from src.modules.company.schemas.company.company import (
     BaseCompanyImageSchema,
-    CompanyListResponseSchema,
     CompleteCompanySchema,
 )
+from src.modules.company.schemas.company.company_price import (
+    CompanyListResponseSchema,
+    CompanyWithTodayPricesSchema,
+)
 from src.modules.company.schemas.company.create_company import CreateCompanySchema
+from src.modules.company.services.company_price import CompanyPriceService
 from src.modules.shared.enums.bucket import BucketNames
 from src.modules.shared.models.geo.city import City
 
@@ -26,14 +30,69 @@ from sqlalchemy.orm import joinedload
 
 from datetime import timedelta
 
+from sqlalchemy.sql.expression import func
+
+from src.modules.shared.schemas.city import BaseCitySchema
+
 
 @dependable
 class CompanyService(BaseService):
     def __init__(self, rc: RequestContext):
         super().__init__(rc)
 
-    async def list_companies(self, skip: int, limit: int) -> CompanyListResponseSchema:
-        pass
+    async def list_companies(
+        self,
+        skip: int,
+        limit: int,
+        company_price_service: CompanyPriceService,
+    ) -> CompanyListResponseSchema:
+        companies_stmt = await self.db.execute(
+            select(Company)
+            .options(
+                joinedload(Company.city),
+                joinedload(Company.organization),
+            )
+            .where(Company.active)
+            .offset(skip)
+            .limit(limit)
+        )
+        companies = companies_stmt.scalars().all()
+        total_companies_stmt = await self.db.execute(
+            select(func.count()).where(Company.active)
+        )
+        total_companies = total_companies_stmt.scalars().first()
+
+        data = []
+        for company in companies:
+            image = await self.get_main_company_image(company.id)
+            data.append(
+                CompanyWithTodayPricesSchema(
+                    name=company.name,
+                    postal_code=company.postal_code,
+                    register_code=company.register_code,
+                    address=company.address,
+                    description=company.description,
+                    is_covered=company.is_covered,
+                    has_camera=company.has_camera,
+                    total_spots=company.total_spots,
+                    has_charging_station=company.has_charging_station,
+                    id=company.id,
+                    city=BaseCitySchema.model_validate(
+                        company.city, from_attributes=True
+                    ),
+                    today_parking_price=await company_price_service.get_parking_price_reference(
+                        company.id
+                    ),
+                    images=[image] if image else [],
+                )
+            )
+
+        return CompanyListResponseSchema(
+            total=total_companies,
+            skip=skip,
+            limit=limit,
+            data=data,
+        )
 
     async def get_company_by_id(self, company_id: str) -> CompleteCompanySchema:
         result = await self.db.execute(
@@ -148,6 +207,35 @@ class CompanyService(BaseService):
             )
             for company_image in company_images
         ]
+
+    async def get_main_company_image(
+        self, company_id: str
+    ) -> BaseCompanyImageSchema | None:
+        stmt = (
+            select(CompanyImage)
+            .where(
+                CompanyImage.company_id == company_id,
+                CompanyImage.active,
+            )
+            .limit(1)
+            .order_by(CompanyImage.is_primary.desc())
+        )
+        result = await self.db.execute(stmt)
+        company_image = result.scalars().first()
+
+        if not company_image:
+            return None
+
+        bucket_name = BucketNames.COMPANY_IMAGES
+        return BaseCompanyImageSchema(
+            id=company_image.id,
+            is_primary=company_image.is_primary,
+            url=await get_presigned_url(
+                bucket_name=bucket_name,
+                object_name=company_image.key,
+                expiration=timedelta(minutes=15).seconds,
+            ),
+        )
 
     async def delete_company_image(
         self, company_id: str, company_image_id: str

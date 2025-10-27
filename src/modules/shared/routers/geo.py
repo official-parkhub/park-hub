@@ -11,14 +11,14 @@ router = APIRouter(
 )
 
 
-@router.post("/state")
+@router.post("/state", status_code=201)
 async def create_state(
     response: DepCreateState,
 ) -> StateWithIDSchema:
     return response
 
 
-@router.post("/city")
+@router.post("/city", status_code=201)
 async def create_city(
     response: DepCreateCity,
 ) -> CityWithIDSchema:

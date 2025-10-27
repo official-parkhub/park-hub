@@ -1,9 +1,8 @@
-from datetime import datetime
+from datetime import date
 from pydantic import BaseModel, Field
 import uuid
 
 from src.modules.company.schemas.organization import OrganizationSchema
-from src.modules.shared.schemas import PaginationSchema
 from src.modules.shared.schemas.city import BaseCitySchema
 
 
@@ -30,7 +29,7 @@ class BaseParkingExceptionSchema(BaseModel):
     end_hour: int
     description: str
     price_cents: int
-    exception_date: datetime
+    exception_date: date
 
 
 class ParkingExceptionWithIDSchema(BaseParkingExceptionSchema):
@@ -47,17 +46,6 @@ class BaseCompanySchema(BaseModel):
     has_camera: bool
     total_spots: int
     has_charging_station: bool
-
-
-class CompanyWithTodayPricesSchema(BaseCompanySchema):
-    id: uuid.UUID
-    city: BaseCitySchema
-    images: list[BaseCompanyImageSchema] = []
-    today_parking_price: BaseParkingPriceSchema | None = None
-
-
-class CompanyListResponseSchema(PaginationSchema):
-    data: list[CompanyWithTodayPricesSchema]
 
 
 class CompleteCompanySchema(BaseCompanySchema):

@@ -11,7 +11,7 @@ from src.modules.shared.services.user import UserService
 router = APIRouter(tags=["Organization"])
 
 
-@router.post("/organization")
+@router.post("/organization", status_code=201)
 async def create_organization(
     organization: OrganizationCreateSchema,
     user: UserCreateSchema,

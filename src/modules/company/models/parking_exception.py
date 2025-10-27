@@ -1,12 +1,12 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Date
 
 from src.core.database.audit import AuditMixin
 from src.core.database.base import Base
 
 from typing import TYPE_CHECKING
 
-from datetime import datetime
+from datetime import date
 
 import uuid
 
@@ -25,7 +25,7 @@ class ParkingException(Base, AuditMixin):
         ForeignKey("company.id"), nullable=False
     )
 
-    exception_date: Mapped[datetime] = mapped_column(nullable=False)
+    exception_date: Mapped[date] = mapped_column(Date, nullable=False)
     start_hour: Mapped[int] = mapped_column(nullable=False)
     end_hour: Mapped[int] = mapped_column(nullable=False)
     price_cents: Mapped[int] = mapped_column(nullable=False)

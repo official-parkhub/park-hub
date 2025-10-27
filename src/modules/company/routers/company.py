@@ -34,7 +34,7 @@ async def list_companies(
     return result
 
 
-@router.post("/")
+@router.post("/", status_code=201)
 async def create_company(
     response: DepCreateCompany,
 ) -> CompleteCompanySchema:

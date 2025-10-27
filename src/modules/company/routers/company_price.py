@@ -1,6 +1,10 @@
 from fastapi import APIRouter
 
-from src.modules.company.dependencies.company_price import DepCreateParkingPrice
+from src.modules.company.dependencies.company_price import (
+    DepCreateParkingPrice,
+    DepCreateParkingPriceException,
+    DepParkingPriceReferences,
+)
 
 router = APIRouter(
     prefix="/company/{company_id}/price",
@@ -8,7 +12,7 @@ router = APIRouter(
 )
 
 
-@router.post("/")
+@router.post("/", status_code=201)
 async def create_parking_price(
     response: DepCreateParkingPrice,
 ):
@@ -16,3 +20,23 @@ async def create_parking_price(
     Create a new parking price.
     """
     return response
+
+
+@router.post("/exception", status_code=201)
+async def create_parking_price_exception(
+    response: DepCreateParkingPriceException,
+):
+    """
+    Create a new parking price exception.
+    """
+    return response
+
+
+@router.get("/reference")
+async def get_parking_price_references(
+    result: DepParkingPriceReferences,
+):
+    """
+    Get parking price references for a company.
+    """
+    return result
