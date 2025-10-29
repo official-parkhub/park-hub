@@ -3,6 +3,7 @@ import uuid
 from pydantic import BaseModel
 
 from src.modules.shared.enums.country import Country
+from src.modules.shared.schemas import PaginationSchema
 
 
 class BaseVehicleSchema(BaseModel):
@@ -22,7 +23,6 @@ class UpsertVehicleResponseSchema(BaseVehicleSchema):
 
 
 class BaseVehicleOwnerSchema(BaseModel):
-    customer_id: uuid.UUID
     name: str
 
 
@@ -30,7 +30,7 @@ class CreateVehicleOwnerSchema(BaseVehicleOwnerSchema):
     vehicle: UpsertVehicleSchema
 
 
-class CreateVehicleOwnerResponseSchema(BaseVehicleOwnerSchema):
+class CreateVehicleOwnerResponseSchema(BaseVehicleSchema):
     id: uuid.UUID
     vehicle_id: uuid.UUID
 
@@ -46,3 +46,12 @@ class RegisterVehicleEntranceSchema(BaseModel):
 
 class RegisterVehicleEntranceResponseSchema(RegisterVehicleEntranceSchema):
     id: uuid.UUID
+
+
+class ListVehicleByCustomerItemSchema(BaseVehicleSchema):
+    vehicle_id: uuid.UUID
+    name_given_by_owner: str
+
+
+class ListVehicleByCustomerResponseSchema(PaginationSchema):
+    vehicles: list[ListVehicleByCustomerItemSchema]
