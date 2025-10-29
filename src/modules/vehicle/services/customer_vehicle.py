@@ -152,3 +152,26 @@ class CustomerVehicleService(BaseService):
                 for vehicle in vehicles
             ],
         )
+
+    async def delete_vehicle_owner(
+        self,
+        customer_id: str,
+        vehicle_id: str,
+    ) -> None:
+        vehicle_owner_stmt = await self.db.execute(
+            select(VehicleOwner).where(
+                VehicleOwner.customer_id == customer_id,
+                VehicleOwner.vehicle_id == vehicle_id,
+                VehicleOwner.active,
+            )
+        )
+        vehicle_owner = vehicle_owner_stmt.scalars().first()
+
+        if not vehicle_owner:
+            raise errors.ResourceNotFound(
+                message="Vehicle owner record not found for this customer and vehicle"
+            )
+
+        vehicle_owner.active = False
+        self.db.add(vehicle_owner)
+        await self.db.flush()

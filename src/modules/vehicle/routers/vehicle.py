@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from src.modules.vehicle.dependencies.customer_vehicle import (
+    DepDeleteCustomerVehicle,
     DepListVehiclesByCustomer,
     DepUpsertCustomerVehicle,
 )
@@ -30,11 +31,13 @@ async def list_vehicles_by_customer(
 
 
 @router.delete("/customer/vehicle/{vehicle_id}", status_code=204)
-async def delete_vehicle():
+async def delete_vehicle(
+    response: DepDeleteCustomerVehicle,
+):
     """
     Delete a vehicle for a customer.
     """
-    pass
+    return response
 
 
 @router.get("/customer/vehicle/{vehicle_id}", status_code=200)

@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import Depends
+from fastapi import Depends, Query
 from src.core import errors
 from src.modules.shared.dependencies.auth import DepCurrentUser
 from src.modules.vehicle.schemas.vehicle import (
@@ -29,8 +29,8 @@ async def _upsert_customer_vehicle(
 async def _list_vehicles_by_customer(
     User: DepCurrentUser,
     customer_vehicle_service: CustomerVehicleService,
-    skip: int = 0,
-    limit: int = 10,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1, le=100),
 ) -> ListVehicleByCustomerResponseSchema:
     if not User.customer:
         raise errors.ResourceNotFound(message="Authenticated customer not found")
@@ -43,6 +43,20 @@ async def _list_vehicles_by_customer(
     return vehicles_response
 
 
+async def _delete_customer_vehicle(
+    User: DepCurrentUser,
+    vehicle_id: str,
+    customer_vehicle_service: CustomerVehicleService,
+) -> None:
+    if not User.customer:
+        raise errors.ResourceNotFound(message="Authenticated customer not found")
+
+    await customer_vehicle_service.delete_vehicle_owner(
+        customer_id=User.customer.id,
+        vehicle_id=vehicle_id,
+    )
+
+
 DepUpsertCustomerVehicle = Annotated[
     CreateVehicleOwnerResponseSchema,
     Depends(_upsert_customer_vehicle),
@@ -51,4 +65,9 @@ DepUpsertCustomerVehicle = Annotated[
 DepListVehiclesByCustomer = Annotated[
     ListVehicleByCustomerResponseSchema,
     Depends(_list_vehicles_by_customer),
+]
+
+DepDeleteCustomerVehicle = Annotated[
+    None,
+    Depends(_delete_customer_vehicle),
 ]
