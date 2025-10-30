@@ -55,3 +55,14 @@ class ListVehicleByCustomerItemSchema(BaseVehicleSchema):
 
 class ListVehicleByCustomerResponseSchema(PaginationSchema):
     vehicles: list[ListVehicleByCustomerItemSchema]
+
+
+class VehicleEntranceResponseSchema(BaseModel):
+    vehicle_id: uuid.UUID
+    company_id: uuid.UUID
+    entrance_date: datetime
+    hourly_rate: int | None
+
+
+class VehicleEntranceInputSchema(BaseModel):
+    plate: str

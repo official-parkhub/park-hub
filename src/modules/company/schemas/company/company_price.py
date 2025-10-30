@@ -13,7 +13,6 @@ from src.modules.shared.schemas.city import BaseCitySchema
 
 
 class CreateParkingPriceSchema(BaseParkingPriceSchema):
-    company_id: uuid.UUID
     pass
 
 
@@ -31,7 +30,7 @@ class BaseParkingPriceExceptionSchema(BaseModel):
 
 
 class CreateParkingPriceExceptionSchema(BaseParkingPriceExceptionSchema):
-    company_id: uuid.UUID
+    pass
 
 
 class CreateParkingPriceExceptionResponseSchema(BaseParkingPriceExceptionSchema):

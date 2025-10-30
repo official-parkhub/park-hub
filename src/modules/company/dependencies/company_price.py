@@ -18,10 +18,9 @@ async def _create_parking_price(
     company_price_service: CompanyPriceService,
     parking_price_schema: CreateParkingPriceSchema,
     company_service: CompanyService,
+    company_id: str,
 ) -> CreateParkingPriceResponseSchema:
-    existing_company = await company_service.get_company_by_id(
-        parking_price_schema.company_id
-    )
+    existing_company = await company_service.get_company_by_id(company_id)
     if (
         not current_user.organization
         or current_user.organization.id != existing_company.organization_id
@@ -30,7 +29,10 @@ async def _create_parking_price(
             "You do not have permission to create parking prices for this company"
         )
 
-    return await company_price_service.create_parking_price(parking_price_schema)
+    return await company_price_service.create_parking_price(
+        company_id=company_id,
+        parking_price_schema=parking_price_schema,
+    )
 
 
 async def _create_parking_price_exception(
@@ -38,10 +40,9 @@ async def _create_parking_price_exception(
     company_price_service: CompanyPriceService,
     create_parking_price_exception_schema: CreateParkingPriceExceptionSchema,
     company_service: CompanyService,
+    company_id: str,
 ) -> CreateParkingPriceExceptionResponseSchema:
-    existing_company = await company_service.get_company_by_id(
-        create_parking_price_exception_schema.company_id
-    )
+    existing_company = await company_service.get_company_by_id(company_id)
     if (
         not current_user.organization
         or current_user.organization.id != existing_company.organization_id

@@ -23,7 +23,7 @@ class CompanyPriceService(BaseService):
         super().__init__(rc)
 
     async def create_parking_price(
-        self, parking_price_schema: CreateParkingPriceSchema
+        self, company_id: str, parking_price_schema: CreateParkingPriceSchema
     ) -> CreateParkingPriceResponseSchema:
         if parking_price_schema.week_day < 0 or parking_price_schema.week_day > 6:
             raise errors.InvalidOperationError(
@@ -32,7 +32,7 @@ class CompanyPriceService(BaseService):
 
         existing_parking_price_stmt = await self.db.execute(
             select(ParkingPrice).where(
-                ParkingPrice.company_id == parking_price_schema.company_id,
+                ParkingPrice.company_id == company_id,
                 ParkingPrice.week_day == parking_price_schema.week_day,
             ),
         )
@@ -50,7 +50,7 @@ class CompanyPriceService(BaseService):
                 )
 
         db_parking_price = ParkingPrice(
-            company_id=parking_price_schema.company_id,
+            company_id=company_id,
             week_day=parking_price_schema.week_day,
             start_hour=parking_price_schema.start_hour,
             end_hour=parking_price_schema.end_hour,
@@ -66,12 +66,12 @@ class CompanyPriceService(BaseService):
 
     async def create_parking_price_exception(
         self,
+        company_id: str,
         create_parking_price_exception_schema: CreateParkingPriceExceptionSchema,
     ) -> CreateParkingPriceExceptionResponseSchema:
         existing_exception_stmt = await self.db.execute(
             select(ParkingException).where(
-                ParkingException.company_id
-                == create_parking_price_exception_schema.company_id,
+                ParkingException.company_id == company_id,
                 ParkingException.exception_date
                 == create_parking_price_exception_schema.exception_date,
                 ParkingException.active,
@@ -85,7 +85,7 @@ class CompanyPriceService(BaseService):
             )
 
         db_parking_exception = ParkingException(
-            company_id=create_parking_price_exception_schema.company_id,
+            company_id=company_id,
             start_hour=create_parking_price_exception_schema.start_hour,
             end_hour=create_parking_price_exception_schema.end_hour,
             price_cents=create_parking_price_exception_schema.price_cents,
@@ -131,7 +131,7 @@ class CompanyPriceService(BaseService):
                 ParkingPrice.company_id == company_id,
                 ParkingPrice.week_day == day_of_week,
                 ParkingPrice.start_hour <= hour_of_day,
-                ParkingPrice.end_hour > hour_of_day,
+                ParkingPrice.end_hour >= hour_of_day,
             )
             .order_by(ParkingPrice.price_cents.asc())
             .limit(1)
