@@ -101,3 +101,7 @@ class GetVehicleOutput(BaseVehicleSchema):
 class VehicleStatisticsResponseSchema(PaginationSchema):
     vehicle: BaseVehicleSchema
     entrances: list[VehicleEntranceStatisticsSchema]
+
+
+class ListActiveVehiclesResponseSchema(PaginationSchema):
+    data: list[BaseVehicleSchema]

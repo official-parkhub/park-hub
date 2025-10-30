@@ -6,6 +6,7 @@ from src.modules.shared.dependencies.auth import DepCurrentUser
 from src.modules.vehicle.schemas.vehicle import (
     CreateVehicleOwnerResponseSchema,
     CreateVehicleOwnerSchema,
+    ListActiveVehiclesResponseSchema,
     ListVehicleByCustomerResponseSchema,
     VehicleStatisticsResponseSchema,
 )
@@ -84,6 +85,28 @@ async def _get_vehicle_statistics(
     )
     return vehicle_statistics
 
+
+async def _list_customer_active_vehicles(
+    User: DepCurrentUser,
+    customer_vehicle_service: CustomerVehicleService,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1, le=100),
+) -> ListActiveVehiclesResponseSchema:
+    if not User.customer:
+        raise errors.ResourceNotFound(message="Authenticated customer not found")
+
+    active_vehicles = await customer_vehicle_service.list_active_vehicles_by_customer(
+        customer_id=User.customer.id,
+        skip=skip,
+        limit=limit,
+    )
+    return active_vehicles
+
+
+DepListCustomerActiveVehicles = Annotated[
+    ListActiveVehiclesResponseSchema,
+    Depends(_list_customer_active_vehicles),
+]
 
 DepGetVehicleStatistics = Annotated[
     VehicleStatisticsResponseSchema,

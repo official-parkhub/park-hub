@@ -7,6 +7,7 @@ from src.modules.vehicle.dependencies.company_vehicle import (
 from src.modules.vehicle.dependencies.customer_vehicle import (
     DepDeleteCustomerVehicle,
     DepGetVehicleStatistics,
+    DepListCustomerActiveVehicles,
     DepListVehiclesByCustomer,
     DepUpsertCustomerVehicle,
 )
@@ -56,11 +57,13 @@ async def get_vehicle_by_plate(
 
 
 @router.get("/customer/active-vehicles", status_code=200)
-async def list_active_vehicles_by_customer():
+async def list_active_vehicles_by_customer(
+    response: DepListCustomerActiveVehicles,
+):
     """
     List all active vehicles for a customer including parking prices.
     """
-    pass
+    return response
 
 
 @router.post("/company/{company_id}/register-entrance", status_code=201)

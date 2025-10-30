@@ -12,6 +12,7 @@ from src.modules.vehicle.schemas.vehicle import (
     CreateVehicleOwnerResponseSchema,
     CreateVehicleOwnerSchema,
     GetVehicleOutput,
+    ListActiveVehiclesResponseSchema,
     ListVehicleByCustomerItemSchema,
     ListVehicleByCustomerResponseSchema,
     UpsertVehicleResponseSchema,
@@ -240,5 +241,53 @@ class CustomerVehicleService(BaseService):
                     entrance, from_attributes=True
                 )
                 for entrance in vehicle_entrances
+            ],
+        )
+
+    async def list_active_vehicles_by_customer(
+        self,
+        customer_id: str,
+        limit: int = 10,
+        skip: int = 0,
+    ) -> ListActiveVehiclesResponseSchema:
+        vehicle_owners_stmt = await self.db.execute(
+            select(Vehicle)
+            .join(VehicleOwner, Vehicle.id == VehicleOwner.vehicle_id)
+            .join(VehicleEntrance, Vehicle.id == VehicleEntrance.vehicle_id)
+            .where(
+                VehicleOwner.customer_id == customer_id,
+                VehicleOwner.active,
+                Vehicle.active,
+                VehicleEntrance.ended_at.is_(None),
+                VehicleEntrance.active,
+            )
+            .limit(limit)
+            .offset(skip)
+        )
+        vehicles = vehicle_owners_stmt.scalars().all()
+
+        total_vehicles_stmt = await self.db.execute(
+            select(literal_column("COUNT(*)"))
+            .select_from(Vehicle)
+            .join(VehicleOwner, Vehicle.id == VehicleOwner.vehicle_id)
+            .join(VehicleEntrance, Vehicle.id == VehicleEntrance.vehicle_id)
+            .where(
+                VehicleOwner.customer_id == customer_id,
+                VehicleOwner.active,
+                Vehicle.active,
+                VehicleEntrance.ended_at.is_(None),
+                VehicleEntrance.active,
+            )
+        )
+
+        total_vehicles = total_vehicles_stmt.scalar_one()
+
+        return ListActiveVehiclesResponseSchema(
+            total=total_vehicles,
+            limit=limit,
+            skip=skip,
+            data=[
+                BaseVehicleSchema.model_validate(vehicle, from_attributes=True)
+                for vehicle in vehicles
             ],
         )
