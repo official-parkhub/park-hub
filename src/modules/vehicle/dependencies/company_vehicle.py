@@ -9,6 +9,8 @@ from src.modules.vehicle.schemas.vehicle import (
     UpsertVehicleSchema,
     VehicleEntranceInputSchema,
     VehicleEntranceResponseSchema,
+    VehicleExitInputSchema,
+    VehicleExitResponseSchema,
 )
 from src.modules.vehicle.services.company_vehicle import CompanyVehicleService
 from src.modules.vehicle.services.customer_vehicle import CustomerVehicleService
@@ -57,7 +59,54 @@ async def _register_vehicle_entrance(
     return vehicle_entrance
 
 
+async def _register_vehicle_exit(
+    current_user: DepCurrentUser,
+    company_service: CompanyService,
+    company_vehicle_service: CompanyVehicleService,
+    customer_vehicle_service: CustomerVehicleService,
+    vehicle_exit_input: VehicleExitInputSchema,
+    company_id: str,
+) -> VehicleExitResponseSchema:
+    existing_company = await company_service.get_company_by_id(company_id)
+    if (
+        not current_user.organization
+        or current_user.organization.id != existing_company.organization_id
+    ):
+        raise errors.ForbiddenError(
+            "You do not have permission to register vehicle exits for this company"
+        )
+
+    vehicle = await customer_vehicle_service.get_vehicle_by_plate(
+        plate=vehicle_exit_input.plate,
+    )
+
+    if not vehicle:
+        raise errors.ResourceNotFound(message="Vehicle not found")
+
+    vehicle_entrance = await company_vehicle_service.get_active_vehicle_entrance(
+        vehicle_id=str(vehicle.id),
+        company_id=company_id,
+    )
+
+    if not vehicle_entrance:
+        raise errors.InvalidOperation(
+            message="Vehicle does not have an active entrance"
+        )
+
+    vehicle_exit = await company_vehicle_service.register_vehicle_exit(
+        vehicle_entrance_id=str(vehicle_entrance.id),
+        ended_at=vehicle_exit_input.ended_at,
+    )
+
+    return vehicle_exit
+
+
 DepRegisterVehicleEntrance = Annotated[
     VehicleEntranceResponseSchema,
     Depends(_register_vehicle_entrance),
+]
+
+DepRegisterVehicleExit = Annotated[
+    VehicleExitResponseSchema,
+    Depends(_register_vehicle_exit),
 ]

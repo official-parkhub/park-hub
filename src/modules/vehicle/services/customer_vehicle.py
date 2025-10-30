@@ -9,6 +9,7 @@ from src.modules.vehicle.models.vehicle_owner import VehicleOwner
 from src.modules.vehicle.schemas.vehicle import (
     CreateVehicleOwnerResponseSchema,
     CreateVehicleOwnerSchema,
+    GetVehicleOutput,
     ListVehicleByCustomerItemSchema,
     ListVehicleByCustomerResponseSchema,
     UpsertVehicleResponseSchema,
@@ -175,3 +176,17 @@ class CustomerVehicleService(BaseService):
         vehicle_owner.active = False
         self.db.add(vehicle_owner)
         await self.db.flush()
+
+    async def get_vehicle_by_plate(
+        self,
+        plate: str,
+    ) -> GetVehicleOutput | None:
+        vehicle_stmt = await self.db.execute(
+            select(Vehicle).where(Vehicle.plate == plate, Vehicle.active)
+        )
+        vehicle = vehicle_stmt.scalars().first()
+
+        if not vehicle:
+            return None
+
+        return GetVehicleOutput.model_validate(vehicle, from_attributes=True)

@@ -1,6 +1,6 @@
-from datetime import datetime
+import datetime
 import uuid
-from pydantic import BaseModel
+from pydantic import AwareDatetime, BaseModel, Field
 
 from src.modules.shared.enums.country import Country
 from src.modules.shared.schemas import PaginationSchema
@@ -38,8 +38,8 @@ class CreateVehicleOwnerResponseSchema(BaseVehicleSchema):
 class RegisterVehicleEntranceSchema(BaseModel):
     vehicle_id: uuid.UUID
     company_id: uuid.UUID
-    entrance_date: datetime = datetime.now()
-    ended_at: datetime | None = None
+    entrance_date: datetime.datetime = Field(default_factory=datetime.datetime.now)
+    ended_at: datetime.datetime | None = None
     total_price: int | None = None
     hourly_rate: int | None = None
 
@@ -58,11 +58,32 @@ class ListVehicleByCustomerResponseSchema(PaginationSchema):
 
 
 class VehicleEntranceResponseSchema(BaseModel):
+    id: uuid.UUID
     vehicle_id: uuid.UUID
     company_id: uuid.UUID
-    entrance_date: datetime
+    entrance_date: datetime.datetime
     hourly_rate: int | None
 
 
 class VehicleEntranceInputSchema(BaseModel):
     plate: str
+
+
+class VehicleExitResponseSchema(BaseModel):
+    vehicle_id: uuid.UUID
+    company_id: uuid.UUID
+    entrance_date: datetime.datetime
+    ended_at: datetime.datetime
+    total_price: float
+    hourly_rate: int | None
+
+
+class VehicleExitInputSchema(BaseModel):
+    plate: str
+    ended_at: AwareDatetime = Field(
+        default_factory=lambda: datetime.datetime.now(datetime.timezone.utc)
+    )
+
+
+class GetVehicleOutput(BaseVehicleSchema):
+    id: uuid.UUID
