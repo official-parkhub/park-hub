@@ -7,6 +7,7 @@ from src.modules.vehicle.schemas.vehicle import (
     CreateVehicleOwnerResponseSchema,
     CreateVehicleOwnerSchema,
     ListVehicleByCustomerResponseSchema,
+    VehicleStatisticsResponseSchema,
 )
 from src.modules.vehicle.services.customer_vehicle import CustomerVehicleService
 
@@ -56,6 +57,38 @@ async def _delete_customer_vehicle(
         vehicle_id=vehicle_id,
     )
 
+
+async def _get_vehicle_statistics(
+    User: DepCurrentUser,
+    plate: str,
+    customer_vehicle_service: CustomerVehicleService,
+) -> VehicleStatisticsResponseSchema:
+    if not User.customer:
+        raise errors.ResourceNotFound(message="Authenticated customer not found")
+
+    vehicle = await customer_vehicle_service.get_vehicle_by_plate(plate=plate)
+    if not vehicle:
+        raise errors.ResourceNotFound(message="Vehicle with the given plate not found")
+
+    is_customer_owner = await customer_vehicle_service.is_customer_vehicle_owner(
+        customer_id=User.customer.id,
+        vehicle_id=vehicle.id,
+    )
+    if not is_customer_owner:
+        raise errors.InvalidOperation(
+            message="Customer is not the owner of this vehicle"
+        )
+
+    vehicle_statistics = await customer_vehicle_service.get_vehicle_statistics_by_id(
+        vehicle_id=vehicle.id,
+    )
+    return vehicle_statistics
+
+
+DepGetVehicleStatistics = Annotated[
+    VehicleStatisticsResponseSchema,
+    Depends(_get_vehicle_statistics),
+]
 
 DepUpsertCustomerVehicle = Annotated[
     CreateVehicleOwnerResponseSchema,

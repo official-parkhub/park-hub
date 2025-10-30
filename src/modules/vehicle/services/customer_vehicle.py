@@ -5,8 +5,10 @@ from src.core.utils.base_service import BaseService
 from src.core.utils.depends import dependable
 from src.core.utils.request_context import RequestContext
 from src.modules.vehicle.models.vehicle import Vehicle
+from src.modules.vehicle.models.vehicle_entrance import VehicleEntrance
 from src.modules.vehicle.models.vehicle_owner import VehicleOwner
 from src.modules.vehicle.schemas.vehicle import (
+    BaseVehicleSchema,
     CreateVehicleOwnerResponseSchema,
     CreateVehicleOwnerSchema,
     GetVehicleOutput,
@@ -14,6 +16,8 @@ from src.modules.vehicle.schemas.vehicle import (
     ListVehicleByCustomerResponseSchema,
     UpsertVehicleResponseSchema,
     UpsertVehicleSchema,
+    VehicleEntranceStatisticsSchema,
+    VehicleStatisticsResponseSchema,
 )
 
 
@@ -190,3 +194,51 @@ class CustomerVehicleService(BaseService):
             return None
 
         return GetVehicleOutput.model_validate(vehicle, from_attributes=True)
+
+    async def get_vehicle_statistics_by_id(
+        self,
+        vehicle_id: str,
+        limit: int = 10,
+        skip: int = 0,
+    ) -> VehicleStatisticsResponseSchema | None:
+        vehicle_stmt = await self.db.execute(
+            select(Vehicle).where(
+                Vehicle.id == vehicle_id,
+                Vehicle.active,
+            )
+        )
+        vehicle = vehicle_stmt.scalar_one_or_none()
+
+        if not vehicle:
+            return None
+
+        vehicle_entrances_stmt = await self.db.execute(
+            select(VehicleEntrance)
+            .where(
+                VehicleEntrance.vehicle_id == vehicle_id,
+                VehicleEntrance.active,
+            )
+            .limit(limit)
+            .offset(skip)
+        )
+        vehicle_entrances = vehicle_entrances_stmt.scalars().all()
+        total_entrances_stmt = await self.db.execute(
+            select(literal_column("COUNT(*)")).where(
+                VehicleEntrance.vehicle_id == vehicle_id,
+                VehicleEntrance.active,
+            )
+        )
+
+        total_entrances = total_entrances_stmt.scalar_one()
+        return VehicleStatisticsResponseSchema(
+            total=total_entrances,
+            limit=limit,
+            skip=skip,
+            vehicle=BaseVehicleSchema.model_validate(vehicle, from_attributes=True),
+            entrances=[
+                VehicleEntranceStatisticsSchema.model_validate(
+                    entrance, from_attributes=True
+                )
+                for entrance in vehicle_entrances
+            ],
+        )

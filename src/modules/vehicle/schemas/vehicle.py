@@ -78,6 +78,15 @@ class VehicleExitResponseSchema(BaseModel):
     hourly_rate: int | None
 
 
+class VehicleEntranceStatisticsSchema(BaseModel):
+    vehicle_id: uuid.UUID
+    company_id: uuid.UUID
+    entrance_date: datetime.datetime
+    ended_at: datetime.datetime | None
+    total_price: float | None
+    hourly_rate: int | None
+
+
 class VehicleExitInputSchema(BaseModel):
     plate: str
     ended_at: AwareDatetime = Field(
@@ -87,3 +96,8 @@ class VehicleExitInputSchema(BaseModel):
 
 class GetVehicleOutput(BaseVehicleSchema):
     id: uuid.UUID
+
+
+class VehicleStatisticsResponseSchema(PaginationSchema):
+    vehicle: BaseVehicleSchema
+    entrances: list[VehicleEntranceStatisticsSchema]

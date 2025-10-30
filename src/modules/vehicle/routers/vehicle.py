@@ -6,6 +6,7 @@ from src.modules.vehicle.dependencies.company_vehicle import (
 )
 from src.modules.vehicle.dependencies.customer_vehicle import (
     DepDeleteCustomerVehicle,
+    DepGetVehicleStatistics,
     DepListVehiclesByCustomer,
     DepUpsertCustomerVehicle,
 )
@@ -44,12 +45,14 @@ async def delete_vehicle(
     return response
 
 
-@router.get("/customer/vehicle/{vehicle_id}", status_code=200)
-async def get_vehicle_by_id():
+@router.get("/customer/vehicle/{vehicle_plate}", status_code=200)
+async def get_vehicle_by_plate(
+    response: DepGetVehicleStatistics,
+):
     """
-    Get vehicle statistics by its ID.
+    Get vehicle statistics by its plate.
     """
-    pass
+    return response
 
 
 @router.get("/customer/active-vehicles", status_code=200)
