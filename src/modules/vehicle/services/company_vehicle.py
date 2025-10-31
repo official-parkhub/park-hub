@@ -116,11 +116,14 @@ class CompanyVehicleService(BaseService):
         limit: int = 100,
     ) -> list[ListActiveVehiclesResponseSchema]:
         vehicle_entrance_stmt = await self.db.execute(
-            select(VehicleEntrance).where(
+            select(VehicleEntrance)
+            .where(
                 VehicleEntrance.company_id == company_id,
                 VehicleEntrance.ended_at.is_(None),
                 VehicleEntrance.active,
             )
+            .offset(skip)
+            .limit(limit)
         )
         vehicle_entrances = vehicle_entrance_stmt.scalars().all()
 
@@ -128,6 +131,44 @@ class CompanyVehicleService(BaseService):
             select(literal_column("COUNT(*)")).where(
                 VehicleEntrance.company_id == company_id,
                 VehicleEntrance.ended_at.is_(None),
+                VehicleEntrance.active,
+            )
+        )
+        vehicle_entrances_count = vehicle_entrances_count_stmt.scalar_one_or_none()
+
+        return ListActiveVehiclesResponseSchema(
+            total=vehicle_entrances_count,
+            skip=skip,
+            limit=limit,
+            data=[
+                VehicleEntranceStatisticsSchema.model_validate(
+                    vehicle_entrance, from_attributes=True
+                )
+                for vehicle_entrance in vehicle_entrances
+            ],
+        )
+
+    async def list_vehicles_by_company(
+        self,
+        company_id: str,
+        skip: int = 0,
+        limit: int = 100,
+    ) -> list[ListActiveVehiclesResponseSchema]:
+        vehicle_entrance_stmt = await self.db.execute(
+            select(VehicleEntrance)
+            .where(
+                VehicleEntrance.company_id == company_id,
+                VehicleEntrance.active,
+            )
+            .order_by(VehicleEntrance.entrance_date.desc())
+            .limit(limit)
+            .offset(skip)
+        )
+        vehicle_entrances = vehicle_entrance_stmt.scalars().all()
+
+        vehicle_entrances_count_stmt = await self.db.execute(
+            select(literal_column("COUNT(*)")).where(
+                VehicleEntrance.company_id == company_id,
                 VehicleEntrance.active,
             )
         )
