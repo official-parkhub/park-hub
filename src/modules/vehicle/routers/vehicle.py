@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from src.modules.vehicle.dependencies.company_vehicle import (
+    DepListCompanyActiveVehicles,
     DepRegisterVehicleEntrance,
     DepRegisterVehicleExit,
 )
@@ -87,11 +88,13 @@ async def register_vehicle_exit(
 
 
 @router.get("/company/{company_id}/active-vehicles", status_code=200)
-async def list_active_vehicles():
+async def list_active_vehicles(
+    response: DepListCompanyActiveVehicles,
+):
     """
     List all active vehicles for a company.
     """
-    pass
+    return response
 
 
 @router.get("/company/{company_id}/report", status_code=200)

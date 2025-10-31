@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import select
+from sqlalchemy import literal_column, select
 
 from src.core import errors
 from src.core.utils.base_service import BaseService
@@ -9,7 +9,9 @@ from src.modules.company.services.company_price import CompanyPriceService
 from src.modules.vehicle.models.vehicle import Vehicle
 from src.modules.vehicle.models.vehicle_entrance import VehicleEntrance
 from src.modules.vehicle.schemas.vehicle import (
+    ListActiveVehiclesResponseSchema,
     VehicleEntranceResponseSchema,
+    VehicleEntranceStatisticsSchema,
     VehicleExitResponseSchema,
 )
 
@@ -105,4 +107,40 @@ class CompanyVehicleService(BaseService):
         await self.db.flush()
         return VehicleExitResponseSchema.model_validate(
             vehicle_entrance, from_attributes=True
+        )
+
+    async def list_active_vehicles_by_company(
+        self,
+        company_id: str,
+        skip: int = 0,
+        limit: int = 100,
+    ) -> list[ListActiveVehiclesResponseSchema]:
+        vehicle_entrance_stmt = await self.db.execute(
+            select(VehicleEntrance).where(
+                VehicleEntrance.company_id == company_id,
+                VehicleEntrance.ended_at.is_(None),
+                VehicleEntrance.active,
+            )
+        )
+        vehicle_entrances = vehicle_entrance_stmt.scalars().all()
+
+        vehicle_entrances_count_stmt = await self.db.execute(
+            select(literal_column("COUNT(*)")).where(
+                VehicleEntrance.company_id == company_id,
+                VehicleEntrance.ended_at.is_(None),
+                VehicleEntrance.active,
+            )
+        )
+        vehicle_entrances_count = vehicle_entrances_count_stmt.scalar_one_or_none()
+
+        return ListActiveVehiclesResponseSchema(
+            total=vehicle_entrances_count,
+            skip=skip,
+            limit=limit,
+            data=[
+                VehicleEntranceStatisticsSchema.model_validate(
+                    vehicle_entrance, from_attributes=True
+                )
+                for vehicle_entrance in vehicle_entrances
+            ],
         )

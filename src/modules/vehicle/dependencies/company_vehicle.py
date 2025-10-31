@@ -6,6 +6,7 @@ from src.modules.company.services.company import CompanyService
 from src.modules.company.services.company_price import CompanyPriceService
 from src.modules.shared.dependencies.auth import DepCurrentUser
 from src.modules.vehicle.schemas.vehicle import (
+    ListActiveVehiclesResponseSchema,
     UpsertVehicleSchema,
     VehicleEntranceInputSchema,
     VehicleEntranceResponseSchema,
@@ -101,6 +102,32 @@ async def _register_vehicle_exit(
     return vehicle_exit
 
 
+async def _list_active_vehicles(
+    current_user: DepCurrentUser,
+    company_service: CompanyService,
+    company_vehicle_service: CompanyVehicleService,
+    company_id: str,
+    skip: int = 0,
+    limit: int = 10,
+) -> ListActiveVehiclesResponseSchema:
+    existing_company = await company_service.get_company_by_id(company_id)
+    if (
+        not current_user.organization
+        or current_user.organization.id != existing_company.organization_id
+    ):
+        raise errors.ForbiddenError(
+            "You do not have permission to list active vehicles for this company"
+        )
+
+    active_vehicles = await company_vehicle_service.list_active_vehicles_by_company(
+        company_id=company_id,
+        skip=skip,
+        limit=limit,
+    )
+
+    return active_vehicles
+
+
 DepRegisterVehicleEntrance = Annotated[
     VehicleEntranceResponseSchema,
     Depends(_register_vehicle_entrance),
@@ -109,4 +136,9 @@ DepRegisterVehicleEntrance = Annotated[
 DepRegisterVehicleExit = Annotated[
     VehicleExitResponseSchema,
     Depends(_register_vehicle_exit),
+]
+
+DepListCompanyActiveVehicles = Annotated[
+    ListActiveVehiclesResponseSchema,
+    Depends(_list_active_vehicles),
 ]

@@ -104,4 +104,4 @@ class VehicleStatisticsResponseSchema(PaginationSchema):
 
 
 class ListActiveVehiclesResponseSchema(PaginationSchema):
-    data: list[BaseVehicleSchema]
+    data: list[VehicleEntranceStatisticsSchema]
