@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+import uuid
 
 from src.modules.company.dependencies.company_image import (
     DepAddCompanyImage,
@@ -46,13 +47,13 @@ async def create_company(
 
 @router.get("/{company_id}")
 async def get_company_by_id(
-    company_id: str,
+    company_id: uuid.UUID,
     company_service: CompanyService,
 ) -> CompleteCompanySchema:
     """
     Get a company by its ID.
     """
-    return await company_service.get_company_by_id(company_id)
+    return await company_service.get_company_by_id(str(company_id))
 
 
 @image_router.get("/")

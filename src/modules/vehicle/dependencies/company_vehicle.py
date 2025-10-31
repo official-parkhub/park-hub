@@ -1,4 +1,5 @@
-from typing import Annotated
+from typing import Annotated, TypeAlias
+import uuid
 
 from fastapi import Depends
 from src.core import errors
@@ -20,13 +21,13 @@ from src.modules.vehicle.services.customer_vehicle import CustomerVehicleService
 async def _register_vehicle_entrance(
     current_user: DepCurrentUser,
     company_service: CompanyService,
-    company_id: str,
+    company_id: uuid.UUID,
     input_data: VehicleEntranceInputSchema,
     customer_vehicle_service: CustomerVehicleService,
     company_vehicle_service: CompanyVehicleService,
     company_price_service: CompanyPriceService,
 ) -> VehicleEntranceResponseSchema:
-    existing_company = await company_service.get_company_by_id(company_id)
+    existing_company = await company_service.get_company_by_id(str(company_id))
     if (
         not current_user.organization
         or current_user.organization.id != existing_company.organization_id
@@ -44,7 +45,7 @@ async def _register_vehicle_entrance(
     existing_vehicle_entrance = (
         await company_vehicle_service.get_active_vehicle_entrance(
             vehicle_id=str(vehicle.id),
-            company_id=company_id,
+            company_id=str(company_id),
         )
     )
 
@@ -53,7 +54,7 @@ async def _register_vehicle_entrance(
 
     vehicle_entrance = await company_vehicle_service.register_vehicle_entrance(
         company_price_service=company_price_service,
-        company_id=company_id,
+        company_id=str(company_id),
         vehicle_id=str(vehicle.id),
     )
 
@@ -66,9 +67,9 @@ async def _register_vehicle_exit(
     company_vehicle_service: CompanyVehicleService,
     customer_vehicle_service: CustomerVehicleService,
     vehicle_exit_input: VehicleExitInputSchema,
-    company_id: str,
+    company_id: uuid.UUID,
 ) -> VehicleExitResponseSchema:
-    existing_company = await company_service.get_company_by_id(company_id)
+    existing_company = await company_service.get_company_by_id(str(company_id))
     if (
         not current_user.organization
         or current_user.organization.id != existing_company.organization_id
@@ -86,7 +87,7 @@ async def _register_vehicle_exit(
 
     vehicle_entrance = await company_vehicle_service.get_active_vehicle_entrance(
         vehicle_id=str(vehicle.id),
-        company_id=company_id,
+        company_id=str(company_id),
     )
 
     if not vehicle_entrance:
@@ -106,11 +107,11 @@ async def _list_active_vehicles(
     current_user: DepCurrentUser,
     company_service: CompanyService,
     company_vehicle_service: CompanyVehicleService,
-    company_id: str,
+    company_id: uuid.UUID,
     skip: int = 0,
     limit: int = 10,
 ) -> ListActiveVehiclesResponseSchema:
-    existing_company = await company_service.get_company_by_id(company_id)
+    existing_company = await company_service.get_company_by_id(str(company_id))
     if (
         not current_user.organization
         or current_user.organization.id != existing_company.organization_id
@@ -120,7 +121,7 @@ async def _list_active_vehicles(
         )
 
     active_vehicles = await company_vehicle_service.list_active_vehicles_by_company(
-        company_id=company_id,
+        company_id=str(company_id),
         skip=skip,
         limit=limit,
     )
@@ -132,11 +133,11 @@ async def _list_vehicles(
     current_user: DepCurrentUser,
     company_service: CompanyService,
     company_vehicle_service: CompanyVehicleService,
-    company_id: str,
+    company_id: uuid.UUID,
     skip: int = 0,
     limit: int = 10,
 ) -> ListActiveVehiclesResponseSchema:
-    existing_company = await company_service.get_company_by_id(company_id)
+    existing_company = await company_service.get_company_by_id(str(company_id))
     if (
         not current_user.organization
         or current_user.organization.id != existing_company.organization_id
@@ -146,7 +147,7 @@ async def _list_vehicles(
         )
 
     active_vehicles = await company_vehicle_service.list_vehicles_by_company(
-        company_id=company_id,
+        company_id=str(company_id),
         skip=skip,
         limit=limit,
     )
@@ -154,22 +155,22 @@ async def _list_vehicles(
     return active_vehicles
 
 
-DepRegisterVehicleEntrance = Annotated[
+DepRegisterVehicleEntrance: TypeAlias = Annotated[
     VehicleEntranceResponseSchema,
     Depends(_register_vehicle_entrance),
 ]
 
-DepRegisterVehicleExit = Annotated[
+DepRegisterVehicleExit: TypeAlias = Annotated[
     VehicleExitResponseSchema,
     Depends(_register_vehicle_exit),
 ]
 
-DepListCompanyActiveVehicles = Annotated[
+DepListCompanyActiveVehicles: TypeAlias = Annotated[
     ListActiveVehiclesResponseSchema,
     Depends(_list_active_vehicles),
 ]
 
-DepListCompanyVehicles = Annotated[
+DepListCompanyVehicles: TypeAlias = Annotated[
     ListActiveVehiclesResponseSchema,
     Depends(_list_vehicles),
 ]

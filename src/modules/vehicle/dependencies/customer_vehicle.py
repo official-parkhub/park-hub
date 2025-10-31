@@ -1,4 +1,5 @@
-from typing import Annotated
+from typing import Annotated, TypeAlias
+import uuid
 
 from fastapi import Depends, Query
 from src.core import errors
@@ -47,7 +48,7 @@ async def _list_vehicles_by_customer(
 
 async def _delete_customer_vehicle(
     User: DepCurrentUser,
-    vehicle_id: str,
+    vehicle_id: uuid.UUID,
     customer_vehicle_service: CustomerVehicleService,
 ) -> None:
     if not User.customer:
@@ -55,7 +56,7 @@ async def _delete_customer_vehicle(
 
     await customer_vehicle_service.delete_vehicle_owner(
         customer_id=User.customer.id,
-        vehicle_id=vehicle_id,
+        vehicle_id=str(vehicle_id),
     )
 
 
@@ -103,27 +104,27 @@ async def _list_customer_active_vehicles(
     return active_vehicles
 
 
-DepListCustomerActiveVehicles = Annotated[
+DepListCustomerActiveVehicles: TypeAlias = Annotated[
     ListActiveVehiclesResponseSchema,
     Depends(_list_customer_active_vehicles),
 ]
 
-DepGetVehicleStatistics = Annotated[
+DepGetVehicleStatistics: TypeAlias = Annotated[
     VehicleStatisticsResponseSchema,
     Depends(_get_vehicle_statistics),
 ]
 
-DepUpsertCustomerVehicle = Annotated[
+DepUpsertCustomerVehicle: TypeAlias = Annotated[
     CreateVehicleOwnerResponseSchema,
     Depends(_upsert_customer_vehicle),
 ]
 
-DepListVehiclesByCustomer = Annotated[
+DepListVehiclesByCustomer: TypeAlias = Annotated[
     ListVehicleByCustomerResponseSchema,
     Depends(_list_vehicles_by_customer),
 ]
 
-DepDeleteCustomerVehicle = Annotated[
+DepDeleteCustomerVehicle: TypeAlias = Annotated[
     None,
     Depends(_delete_customer_vehicle),
 ]

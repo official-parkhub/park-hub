@@ -106,11 +106,3 @@ async def list_vehicle_history(
     List vehicle history report for a company including entrances and exits.
     """
     return response
-
-
-@router.get("/company/{company_id}/statistics", status_code=200)
-async def get_vehicle_statistics():
-    """
-    Get vehicle statistics for a company specific for income.
-    """
-    pass
