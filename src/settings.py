@@ -2,8 +2,6 @@ from urllib.parse import quote_plus
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from src.path import ROOT_DIR
-
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_ignore_empty=True)
@@ -46,5 +44,4 @@ class Settings(BaseSettings):
         return f"postgresql+psycopg://{user}:{password}@{host}:{port}/{database}"
 
 
-ENV_FILE = ROOT_DIR / "env/.env"
-SETTINGS = Settings(_env_file=ENV_FILE)
+SETTINGS = Settings()

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 import uuid
 
 from src.modules.shared.schemas.state import StateWithIDSchema
@@ -20,9 +20,7 @@ class OrganizationResponseSchema(BaseModel):
     name: str
     register_code: str
     state_id: uuid.UUID
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class OrganizationSchema(OrganizationResponseSchema):

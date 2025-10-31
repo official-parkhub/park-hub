@@ -23,6 +23,9 @@ dependencies = [
     "PyJWT (>=2.8.0,<3.0.0)",
     "python-multipart>=0.0.20",
     "boto3>=1.40.59",
+    "faker>=37.12.0",
+    "pytest>=8.4.2",
+    "pytest-faker>=2.0.0",
 ]
 
 
