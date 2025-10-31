@@ -7,10 +7,10 @@ from src.modules.shared.schemas import PaginationSchema
 
 
 class BaseVehicleSchema(BaseModel):
-    plate: str
-    model: str | None = None
-    year: int | None = None
-    color: str | None = None
+    plate: str = Field(min_length=1, max_length=20)
+    model: str | None = Field(default=None, max_length=100)
+    year: int | None = Field(default=None, ge=1900, le=2100)
+    color: str | None = Field(default=None, max_length=50)
     country: Country = Country.BR
 
 
@@ -23,7 +23,7 @@ class UpsertVehicleResponseSchema(BaseVehicleSchema):
 
 
 class BaseVehicleOwnerSchema(BaseModel):
-    name: str
+    name: str = Field(min_length=1, max_length=100)
 
 
 class CreateVehicleOwnerSchema(BaseVehicleOwnerSchema):
@@ -38,8 +38,10 @@ class CreateVehicleOwnerResponseSchema(BaseVehicleSchema):
 class RegisterVehicleEntranceSchema(BaseModel):
     vehicle_id: uuid.UUID
     company_id: uuid.UUID
-    entrance_date: datetime.datetime = Field(default_factory=datetime.datetime.now)
-    ended_at: datetime.datetime | None = None
+    entrance_date: AwareDatetime = Field(
+        default_factory=lambda: datetime.datetime.now(datetime.timezone.utc)
+    )
+    ended_at: AwareDatetime | None = None
     total_price: int | None = None
     hourly_rate: int | None = None
 
@@ -61,19 +63,19 @@ class VehicleEntranceResponseSchema(BaseModel):
     id: uuid.UUID
     vehicle_id: uuid.UUID
     company_id: uuid.UUID
-    entrance_date: datetime.datetime
+    entrance_date: AwareDatetime
     hourly_rate: int | None
 
 
 class VehicleEntranceInputSchema(BaseModel):
-    plate: str
+    plate: str = Field(min_length=1, max_length=20)
 
 
 class VehicleExitResponseSchema(BaseModel):
     vehicle_id: uuid.UUID
     company_id: uuid.UUID
-    entrance_date: datetime.datetime
-    ended_at: datetime.datetime
+    entrance_date: AwareDatetime
+    ended_at: AwareDatetime
     total_price: float
     hourly_rate: int | None
 
@@ -81,8 +83,8 @@ class VehicleExitResponseSchema(BaseModel):
 class VehicleEntranceStatisticsSchema(BaseModel):
     vehicle_id: uuid.UUID
     company_id: uuid.UUID
-    entrance_date: datetime.datetime
-    ended_at: datetime.datetime | None
+    entrance_date: AwareDatetime
+    ended_at: AwareDatetime | None
     total_price: float | None
     hourly_rate: int | None
 

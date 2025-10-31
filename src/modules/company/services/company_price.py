@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import select
 
 from src.core import errors
@@ -103,7 +103,7 @@ class CompanyPriceService(BaseService):
     async def get_parking_price_reference(
         self,
         company_id: str,
-        reference_datetime: datetime = datetime.now(),
+        reference_datetime: datetime = datetime.now(timezone.utc),
     ) -> ParkingPriceReferenceSchema | None:
         exception_stmt = await self.db.execute(
             select(ParkingException)

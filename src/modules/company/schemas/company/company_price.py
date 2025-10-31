@@ -1,7 +1,7 @@
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 import uuid
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, AwareDatetime
 
 from src.modules.company.schemas.company.company import (
     BaseCompanyImageSchema,
@@ -45,7 +45,9 @@ class ParkingPriceReferenceSchema(BaseModel):
     is_discount: bool
     description: str | None = None
     exception_date: date | None = None
-    reference_date: datetime = datetime.now()
+    reference_date: AwareDatetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc)
+    )
 
 
 class CompanyWithTodayPricesSchema(BaseCompanySchema):
