@@ -1,6 +1,6 @@
 import boto3
 from loguru import logger
-from settings import SETTINGS
+from src.settings import SETTINGS
 import asyncio
 from botocore.exceptions import ClientError
 

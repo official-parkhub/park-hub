@@ -18,3 +18,11 @@ class UserBuilder:
         for key, value in kwargs.items():
             setattr(self.user, key, value)
         return self
+
+    def get_user(self) -> User:
+        return self.user
+
+    async def build(self, db) -> User:
+        db.add(self.user)
+        await db.flush()
+        return self.user
