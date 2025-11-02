@@ -13,10 +13,10 @@ class OrganizationBuilder:
     def __init__(self):
         self.attrs: dict = {
             "id": uuid4(),
-            "user_id": EMPTY,  # relationship -> build if empty
+            "user_id": EMPTY,
             "name": self.faker.company(),
             "register_code": self.faker.unique.msisdn(),
-            "state_id": EMPTY,  # relationship -> build if empty
+            "state_id": EMPTY,
         }
 
     def customize(self, **kwargs):
@@ -27,7 +27,6 @@ class OrganizationBuilder:
         return Organization(**self.attrs)
 
     async def build(self, db) -> Organization:
-        # resolve relationships lazily
         if self.attrs.get("user_id") == EMPTY:
             from tests.helpers.builders.user_builder import UserBuilder
 

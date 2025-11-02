@@ -17,7 +17,7 @@ class CityBuilder:
             "name": self.faker.city(),
             "identification_code": self.faker.postcode(),
             "country": Country.BR,
-            "state_id": EMPTY,  # relationship -> build if empty
+            "state_id": EMPTY,
         }
 
     def customize(self, **kwargs):
@@ -25,7 +25,6 @@ class CityBuilder:
         return self
 
     def get_city(self) -> City:
-        # Note: if state_id is still 'empty', this instance is not ready to persist
         return City(**self.attrs)
 
     async def build(self, db) -> City:

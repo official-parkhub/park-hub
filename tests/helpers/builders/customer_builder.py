@@ -13,7 +13,7 @@ class CustomerBuilder:
     def __init__(self):
         self.attrs: dict = {
             "id": uuid4(),
-            "user_id": EMPTY,  # relationship -> build if empty
+            "user_id": EMPTY,
             "first_name": self.faker.first_name(),
             "last_name": self.faker.last_name(),
             "birth_date": self.faker.date_of_birth(minimum_age=18, maximum_age=90),

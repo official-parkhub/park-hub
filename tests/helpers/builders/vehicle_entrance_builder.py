@@ -15,8 +15,8 @@ class VehicleEntranceBuilder:
         now = datetime.now(timezone.utc)
         self.attrs: dict = {
             "id": uuid4(),
-            "vehicle_id": EMPTY,  # relationship
-            "company_id": EMPTY,  # relationship
+            "vehicle_id": EMPTY,
+            "company_id": EMPTY,
             "entrance_date": now - timedelta(hours=self.faker.random_int(0, 4)),
             "ended_at": None,
             "hourly_rate": self.faker.random_int(min=500, max=5000),

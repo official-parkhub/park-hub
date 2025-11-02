@@ -13,8 +13,8 @@ class CompanyBuilder:
     def __init__(self):
         self.attrs: dict = {
             "id": uuid4(),
-            "organization_id": EMPTY,  # relationship -> build if empty
-            "city_id": EMPTY,  # relationship -> build if empty
+            "organization_id": EMPTY,
+            "city_id": EMPTY,
             "name": self.faker.company(),
             "register_code": self.faker.unique.ean(length=13),
             "address": self.faker.street_address(),

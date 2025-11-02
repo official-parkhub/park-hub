@@ -14,8 +14,8 @@ class VehicleOwnerBuilder:
         self.attrs: dict = {
             "id": uuid4(),
             "name": self.faker.name(),
-            "vehicle_id": EMPTY,  # relationship
-            "customer_id": EMPTY,  # relationship
+            "vehicle_id": EMPTY,
+            "customer_id": EMPTY,
         }
 
     def customize(self, **kwargs):
