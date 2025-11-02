@@ -8,6 +8,21 @@ from sqlalchemy import create_engine, text
 from alembic import command
 from alembic.config import Config
 
+list_db_tables = [
+    "company_image",
+    "parking_price",
+    "parking_exception",
+    "vehicle_entrance",
+    "company",
+    "vehicle_owner",
+    "city",
+    "organization",
+    "customer",
+    "user",
+    "state",
+    "vehicle",
+]
+
 
 def find_repo_root(start: Path | None = None) -> Path:
     """Ascend directories until 'alembic.ini' is found, return that folder."""
@@ -51,3 +66,16 @@ def run_migrations(repo_root: Path | None = None) -> None:
     repo = find_repo_root(repo_root)
     cfg = Config(str(repo / "alembic.ini"))
     command.upgrade(cfg, "head")
+
+
+async def clear_database(db) -> None:
+    for table in list_db_tables:
+        await db.execute(text(f'DELETE FROM "{table}"'))
+
+
+def clear_database_using_url(url: str) -> None:
+    engine = create_engine(url)
+    with engine.connect() as conn:
+        for table in list_db_tables:
+            conn.execute(text(f'delete from "{table}"'))
+    engine.dispose()

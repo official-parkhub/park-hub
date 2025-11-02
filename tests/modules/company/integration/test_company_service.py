@@ -4,6 +4,7 @@ from src.modules.company.services.company import CompanyService
 from src.modules.company.schemas.company.create_company import CreateCompanySchema
 from tests.helpers.builders.city_builder import CityBuilder
 from tests.helpers.builders.organization_builder import OrganizationBuilder
+from tests.helpers.db_utils import clear_database
 
 
 class _StubCompanyPriceService:
@@ -13,8 +14,9 @@ class _StubCompanyPriceService:
 
 class TestCompanyService:
     @pytest.fixture(autouse=True)
-    def setup(self, rc):
+    async def setup(self, rc, db):
         self.service = CompanyService(rc)
+        await clear_database(db)
 
     async def test_create_and_get_company(self, db, faker):
         org = await OrganizationBuilder().build(db)

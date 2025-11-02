@@ -1,11 +1,17 @@
+import pytest
 from tests.helpers.builders.organization_builder import OrganizationBuilder
 from tests.helpers.builders.city_builder import CityBuilder
 from tests.helpers.builders.user_builder import UserBuilder
+from tests.helpers.db_utils import clear_database
 from tests.helpers.mocks.auth import mock_get_current_user
 from uuid import uuid4
 
 
 class TestCompanyRoute:
+    @pytest.fixture(autouse=True)
+    async def setup(self, db):
+        await clear_database(db)
+
     async def test_create_and_get_company(self, client, db, faker):
         user = await UserBuilder().customize(is_admin=True).build(db)
         org = await OrganizationBuilder().customize(user_id=user.id).build(db)

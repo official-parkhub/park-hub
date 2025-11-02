@@ -4,12 +4,14 @@ from src.modules.shared.services.geo import GeoService
 from src.modules.shared.schemas.state import CreateStateSchema
 from src.modules.shared.schemas.city import CreateCitySchema
 from src.modules.shared.enums.country import Country
+from tests.helpers.db_utils import clear_database
 
 
 class TestGeoService:
     @pytest.fixture(autouse=True)
-    def setup(self, rc):
+    async def setup(self, rc, db):
         self.service = GeoService(rc)
+        await clear_database(db)
 
     async def test_create_state_and_city_with_state(self, faker):
         st = await self.service.create_state(

@@ -7,6 +7,7 @@ from sqlalchemy.orm import sessionmaker
 
 from tests.helpers.db_utils import (
     build_db_url_from_env,
+    clear_database_using_url,
     run_migrations,
     wait_for_db,
 )
@@ -22,6 +23,7 @@ def _prepare_db() -> None:
     url = build_db_url_from_env()
     wait_for_db(url, timeout=DB_WAIT_TIMEOUT)
     run_migrations()
+    clear_database_using_url(url)
 
 
 @pytest.fixture(scope="session")

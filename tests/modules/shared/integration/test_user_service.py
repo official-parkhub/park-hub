@@ -2,12 +2,14 @@ import pytest
 
 from src.modules.shared.services.user import UserService
 from src.modules.shared.schemas.user import UserCreateSchema
+from tests.helpers.db_utils import clear_database
 
 
 class TestUserService:
     @pytest.fixture(autouse=True)
-    def setup(self, rc):
+    async def setup(self, rc, db):
         self.service = UserService(rc)
+        await clear_database(db)
 
     async def test_create_user_and_duplicate_email(self, faker):
         email = faker.unique.email()

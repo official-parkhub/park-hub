@@ -9,12 +9,14 @@ from src.modules.company.schemas.company.company_price import (
     CreateParkingPriceExceptionSchema,
 )
 from tests.helpers.builders.company_builder import CompanyBuilder
+from tests.helpers.db_utils import clear_database
 
 
 class TestCompanyPriceService:
     @pytest.fixture(autouse=True)
-    def setup(self, rc):
+    async def setup(self, rc, db):
         self.service = CompanyPriceService(rc)
+        await clear_database(db)
 
     async def test_create_parking_price_overlap_raises(self, db):
         company = await CompanyBuilder().build(db)
