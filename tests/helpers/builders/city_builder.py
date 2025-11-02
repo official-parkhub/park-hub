@@ -38,4 +38,5 @@ class CityBuilder:
         db.add(city)
         await db.flush()
         await db.refresh(city)
+        await db.commit()
         return city

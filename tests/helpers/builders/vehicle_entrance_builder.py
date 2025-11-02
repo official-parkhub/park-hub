@@ -47,4 +47,5 @@ class VehicleEntranceBuilder:
         db.add(ve)
         await db.flush()
         await db.refresh(ve)
+        await db.commit()
         return ve

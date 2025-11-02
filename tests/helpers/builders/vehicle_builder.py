@@ -31,4 +31,5 @@ class VehicleBuilder:
         db.add(v)
         await db.flush()
         await db.refresh(v)
+        await db.commit()
         return v

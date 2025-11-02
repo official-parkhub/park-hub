@@ -43,4 +43,5 @@ class OrganizationBuilder:
         db.add(org)
         await db.flush()
         await db.refresh(org)
+        await db.commit()
         return org

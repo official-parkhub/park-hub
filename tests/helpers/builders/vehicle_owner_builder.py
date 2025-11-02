@@ -41,5 +41,6 @@ class VehicleOwnerBuilder:
         vo = VehicleOwner(**self.attrs)
         db.add(vo)
         await db.flush()
-        await db.refresh(vo)
+        await db.refresho(vo)
+        await db.commit()
         return vo

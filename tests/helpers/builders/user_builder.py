@@ -25,4 +25,5 @@ class UserBuilder:
     async def build(self, db) -> User:
         db.add(self.user)
         await db.flush()
+        await db.commit()
         return self.user

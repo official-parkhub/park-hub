@@ -28,4 +28,5 @@ class StateBuilder:
         db.add(st)
         await db.flush()
         await db.refresh(st)
+        await db.commit()
         return st

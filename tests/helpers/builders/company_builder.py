@@ -50,4 +50,5 @@ class CompanyBuilder:
         db.add(comp)
         await db.flush()
         await db.refresh(comp)
+        await db.commit()
         return comp

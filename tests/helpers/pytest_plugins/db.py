@@ -11,7 +11,7 @@ from tests.helpers.db_utils import (
     wait_for_db,
 )
 
-from src.api.main import create_app
+from fastapi.testclient import TestClient
 
 
 DB_WAIT_TIMEOUT = float(os.getenv("TEST_DB_WAIT_TIMEOUT", "30"))
@@ -48,8 +48,15 @@ async def db(async_session_maker) -> AsyncGenerator[AsyncSession, None]:
 
 @pytest.fixture(scope="session")
 def app():
-    app = create_app()
+    from src.api.main import app
+
     return app
+
+
+@pytest.fixture
+def client(app):
+    with TestClient(app) as c:
+        yield c
 
 
 @pytest.fixture

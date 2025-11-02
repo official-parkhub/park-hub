@@ -54,7 +54,8 @@ async def _create_parking_price_exception(
         )
 
     return await company_price_service.create_parking_price_exception(
-        create_parking_price_exception_schema
+        company_id=str(company_id),
+        create_parking_price_exception_schema=create_parking_price_exception_schema,
     )
 
 

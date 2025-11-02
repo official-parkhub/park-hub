@@ -37,4 +37,5 @@ class CustomerBuilder:
         db.add(cust)
         await db.flush()
         await db.refresh(cust)
+        await db.commit()
         return cust
