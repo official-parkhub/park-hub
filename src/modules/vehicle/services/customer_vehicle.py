@@ -250,10 +250,11 @@ class CustomerVehicleService(BaseService):
         limit: int = 10,
         skip: int = 0,
     ) -> ListActiveVehiclesResponseSchema:
-        vehicle_owners_stmt = await self.db.execute(
-            select(Vehicle)
-            .join(VehicleOwner, Vehicle.id == VehicleOwner.vehicle_id)
-            .join(VehicleEntrance, Vehicle.id == VehicleEntrance.vehicle_id)
+        # Select active vehicle entrances for customer's owned vehicles
+        vehicle_entrances_stmt = await self.db.execute(
+            select(VehicleEntrance)
+            .join(Vehicle, VehicleEntrance.vehicle_id == Vehicle.id)
+            .join(VehicleOwner, VehicleOwner.vehicle_id == Vehicle.id)
             .where(
                 VehicleOwner.customer_id == customer_id,
                 VehicleOwner.active,
@@ -264,13 +265,14 @@ class CustomerVehicleService(BaseService):
             .limit(limit)
             .offset(skip)
         )
-        vehicles = vehicle_owners_stmt.scalars().all()
+
+        vehicle_entrances = vehicle_entrances_stmt.scalars().all()
 
         total_vehicles_stmt = await self.db.execute(
             select(literal_column("COUNT(*)"))
-            .select_from(Vehicle)
-            .join(VehicleOwner, Vehicle.id == VehicleOwner.vehicle_id)
-            .join(VehicleEntrance, Vehicle.id == VehicleEntrance.vehicle_id)
+            .select_from(VehicleEntrance)
+            .join(Vehicle, VehicleEntrance.vehicle_id == Vehicle.id)
+            .join(VehicleOwner, VehicleOwner.vehicle_id == Vehicle.id)
             .where(
                 VehicleOwner.customer_id == customer_id,
                 VehicleOwner.active,
@@ -287,7 +289,9 @@ class CustomerVehicleService(BaseService):
             limit=limit,
             skip=skip,
             data=[
-                BaseVehicleSchema.model_validate(vehicle, from_attributes=True)
-                for vehicle in vehicles
+                VehicleEntranceStatisticsSchema.model_validate(
+                    entrance, from_attributes=True
+                )
+                for entrance in vehicle_entrances
             ],
         )

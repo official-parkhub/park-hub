@@ -13,7 +13,7 @@ class Settings(BaseSettings):
 
     # Optional Features
     feat_enable_core_docs: bool = True
-    feat_allow_wildcard_cors: bool = False
+    feat_allow_wildcard_cors: bool = True
 
     # Auth
     auth_secret_key: str

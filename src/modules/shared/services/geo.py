@@ -76,3 +76,19 @@ class GeoService(BaseService):
                 }
             ),
         )
+
+    async def get_states(
+        self,
+    ) -> list[StateWithIDSchema]:
+        result = await self.db.execute(select(State))
+        states = result.scalars().all()
+
+        return [
+            StateWithIDSchema(
+                id=state.id,
+                name=state.name,
+                country=state.country,
+                iso2_code=state.iso2_code,
+            )
+            for state in states
+        ]

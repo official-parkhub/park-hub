@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 import uuid
 
+from src.modules.company.dependencies.can_manage_company import DepCanManageCompany
 from src.modules.company.dependencies.company_image import (
     DepAddCompanyImage,
     DepCompanyImages,
@@ -31,6 +32,16 @@ async def list_companies(
 ):
     """
     List all companies.
+    """
+    return result
+
+
+@router.get("/{company_id}/can-manage")
+async def can_manage_company(
+    result: DepCanManageCompany,
+) -> bool:
+    """
+    Check if the current user can manage the specified company.
     """
     return result
 

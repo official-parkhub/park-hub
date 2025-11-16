@@ -1,4 +1,5 @@
 from datetime import datetime
+import math
 from sqlalchemy import literal_column, select
 
 from src.core import errors
@@ -101,8 +102,11 @@ class CompanyVehicleService(BaseService):
 
         vehicle_entrance.ended_at = ended_at
         vehicle_entrance.total_price = (
-            (ended_at - vehicle_entrance.entrance_date).total_seconds() // 3600
-        ) * vehicle_entrance.hourly_rate
+            math.ceil(
+                (ended_at - vehicle_entrance.entrance_date).total_seconds() / 3600
+            )
+            * vehicle_entrance.hourly_rate
+        )
         self.db.add(vehicle_entrance)
         await self.db.flush()
         return VehicleExitResponseSchema.model_validate(

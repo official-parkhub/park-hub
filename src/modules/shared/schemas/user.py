@@ -1,5 +1,10 @@
 from typing import Literal
-from pydantic import BaseModel, EmailStr, Field
+from typing import Optional
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
+import uuid
+
+from src.modules.company.schemas.organization import OrganizationSchema
+from src.modules.driver.schemas.customer import CustomerResponseSchema
 
 
 class UserCreateSchema(BaseModel):
@@ -20,3 +25,13 @@ class LoginResponseSchema(BaseModel):
 class TokenData(BaseModel):
     user_id: str
     exp: int
+
+
+class UserWithoutPasswordSchema(BaseModel):
+    id: uuid.UUID
+    email: EmailStr
+    is_admin: bool
+    customer: Optional[CustomerResponseSchema] = None
+    organization: Optional[OrganizationSchema] = None
+
+    model_config = ConfigDict(from_attributes=True)

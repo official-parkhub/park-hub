@@ -22,7 +22,18 @@ async def _create_state(
     return await geo_service.create_state(state)
 
 
+async def _get_states(
+    geo_service: GeoService,
+) -> list[StateWithIDSchema]:
+    return await geo_service.get_states()
+
+
 DepCreateState = Annotated[
     StateWithIDSchema,
     Depends(_create_state),
+]
+
+DepGetStates = Annotated[
+    list[StateWithIDSchema],
+    Depends(_get_states),
 ]

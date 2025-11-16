@@ -6,7 +6,7 @@ from src.core.database.base import Base
 
 import uuid
 
-from datetime import datetime
+import datetime
 
 
 class VehicleEntrance(Base, AuditMixin):
@@ -23,10 +23,10 @@ class VehicleEntrance(Base, AuditMixin):
         ForeignKey("company.id"), nullable=False
     )
 
-    entrance_date: Mapped[datetime] = mapped_column(
-        nullable=False, default=datetime.now()
+    entrance_date: Mapped[datetime.datetime] = mapped_column(
+        nullable=False, default=lambda: datetime.datetime.now(datetime.timezone.utc)
     )
-    ended_at: Mapped[datetime | None] = mapped_column(nullable=True)
+    ended_at: Mapped[datetime.datetime | None] = mapped_column(nullable=True)
 
     hourly_rate: Mapped[int | None] = mapped_column(nullable=True)
     total_price: Mapped[int | None] = mapped_column(nullable=True)

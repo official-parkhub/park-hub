@@ -45,8 +45,9 @@ class CompanyService(BaseService):
         skip: int,
         limit: int,
         company_price_service: CompanyPriceService,
+        organization_id: str | None = None,
     ) -> CompanyListResponseSchema:
-        companies_stmt = await self.db.execute(
+        companies_stmt = (
             select(Company)
             .options(
                 joinedload(Company.city),
@@ -56,6 +57,14 @@ class CompanyService(BaseService):
             .offset(skip)
             .limit(limit)
         )
+
+        if organization_id:
+            companies_stmt = companies_stmt.where(
+                Company.organization_id == organization_id
+            )
+
+        companies_stmt = await self.db.execute(companies_stmt)
+
         companies = companies_stmt.scalars().all()
         total_companies_stmt = await self.db.execute(
             select(func.count()).where(Company.active)
