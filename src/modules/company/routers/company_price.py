@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from src.modules.company.dependencies.company_price import (
     DepCreateParkingPrice,
     DepCreateParkingPriceException,
+    DepListParkingPrices,
     DepParkingPriceReferences,
 )
 
@@ -38,5 +39,15 @@ async def get_parking_price_references(
 ):
     """
     Get parking price references for a company.
+    """
+    return result
+
+
+@router.get("/list")
+async def list_parking_prices(
+    result: DepListParkingPrices,
+):
+    """
+    List all parking prices for a company.
     """
     return result

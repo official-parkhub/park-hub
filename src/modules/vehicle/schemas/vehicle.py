@@ -87,6 +87,7 @@ class VehicleEntranceStatisticsSchema(BaseModel):
     ended_at: AwareDatetime | None
     total_price: float | None
     hourly_rate: int | None
+    plate: str
 
 
 class VehicleExitInputSchema(BaseModel):

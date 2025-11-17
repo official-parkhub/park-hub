@@ -59,3 +59,7 @@ class CompanyWithTodayPricesSchema(BaseCompanySchema):
 
 class CompanyListResponseSchema(PaginationSchema):
     data: list[CompanyWithTodayPricesSchema]
+
+
+class ListParkingPricesResponseSchema(PaginationSchema):
+    data: list[BaseParkingPriceSchema]

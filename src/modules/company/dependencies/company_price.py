@@ -8,6 +8,7 @@ from src.modules.company.schemas.company.company_price import (
     CreateParkingPriceExceptionSchema,
     CreateParkingPriceResponseSchema,
     CreateParkingPriceSchema,
+    ListParkingPricesResponseSchema,
     ParkingPriceReferenceSchema,
 )
 from src.modules.company.services.company import CompanyService
@@ -75,6 +76,16 @@ async def _get_parking_price_references(
     return price_reference
 
 
+async def _list_parking_prices(
+    _current_user: DepCurrentUser,
+    company_price_service: CompanyPriceService,
+    company_id: uuid.UUID,
+) -> ListParkingPricesResponseSchema:
+    parking_prices = await company_price_service.list_parking_prices(str(company_id))
+
+    return parking_prices
+
+
 DepParkingPriceReferences: TypeAlias = Annotated[
     ParkingPriceReferenceSchema,
     Depends(_get_parking_price_references),
@@ -88,4 +99,9 @@ DepCreateParkingPrice: TypeAlias = Annotated[
 DepCreateParkingPriceException: TypeAlias = Annotated[
     CreateParkingPriceExceptionResponseSchema,
     Depends(_create_parking_price_exception),
+]
+
+DepListParkingPrices: TypeAlias = Annotated[
+    ListParkingPricesResponseSchema,
+    Depends(_list_parking_prices),
 ]

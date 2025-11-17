@@ -250,7 +250,6 @@ class CustomerVehicleService(BaseService):
         limit: int = 10,
         skip: int = 0,
     ) -> ListActiveVehiclesResponseSchema:
-        # Select active vehicle entrances for customer's owned vehicles
         vehicle_entrances_stmt = await self.db.execute(
             select(VehicleEntrance)
             .join(Vehicle, VehicleEntrance.vehicle_id == Vehicle.id)

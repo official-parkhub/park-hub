@@ -20,7 +20,18 @@ async def _create_city(
     return await geo_service.create_city(city)
 
 
+async def _get_cities(
+    geo_service: GeoService,
+) -> list[CityWithIDSchema]:
+    return await geo_service.list_cities()
+
+
 DepCreateCity = Annotated[
     CityWithIDSchema,
     Depends(_create_city),
+]
+
+DepGetCities = Annotated[
+    list[CityWithIDSchema],
+    Depends(_get_cities),
 ]

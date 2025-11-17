@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from src.modules.shared.dependencies.state import DepCreateState, DepGetStates
-from src.modules.shared.dependencies.city import DepCreateCity
+from src.modules.shared.dependencies.city import DepCreateCity, DepGetCities
 from src.modules.shared.schemas.state import StateWithIDSchema
 from src.modules.shared.schemas.city import CityWithIDSchema
 
@@ -29,4 +29,11 @@ async def get_states(
 async def create_city(
     response: DepCreateCity,
 ) -> CityWithIDSchema:
+    return response
+
+
+@router.get("/cities", status_code=200)
+async def get_cities(
+    response: DepGetCities,
+) -> list[CityWithIDSchema]:
     return response

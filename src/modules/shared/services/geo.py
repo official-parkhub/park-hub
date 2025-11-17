@@ -8,6 +8,7 @@ from src.modules.shared.models.geo.state import State
 from src.modules.shared.models.geo.city import City
 from src.modules.shared.schemas.state import CreateStateSchema, StateWithIDSchema
 from src.modules.shared.schemas.city import CreateCitySchema, CityWithIDSchema
+from sqlalchemy.orm import selectinload
 
 
 @dependable
@@ -91,4 +92,32 @@ class GeoService(BaseService):
                 iso2_code=state.iso2_code,
             )
             for state in states
+        ]
+
+    async def list_cities(
+        self,
+    ) -> list[CityWithIDSchema]:
+        result = await self.db.execute(
+            select(City).options(
+                selectinload(City.state),
+            )
+        )
+        cities = result.scalars().all()
+        return [
+            CityWithIDSchema(
+                id=city.id,
+                name=city.name,
+                identification_code=city.identification_code,
+                country=city.country,
+                state=(
+                    None
+                    if getattr(city, "state", None) is None
+                    else {
+                        "name": city.state.name,
+                        "country": city.state.country,
+                        "iso2_code": getattr(city.state, "iso2_code", None),
+                    }
+                ),
+            )
+            for city in cities
         ]

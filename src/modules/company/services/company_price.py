@@ -12,8 +12,10 @@ from src.modules.company.schemas.company.company_price import (
     CreateParkingPriceExceptionSchema,
     CreateParkingPriceResponseSchema,
     CreateParkingPriceSchema,
+    ListParkingPricesResponseSchema,
     ParkingPriceReferenceSchema,
 )
+from src.modules.company.schemas.company.company import BaseParkingPriceSchema
 from src.utils.time_overlap import interval_overlap
 
 
@@ -143,4 +145,26 @@ class CompanyPriceService(BaseService):
 
         return ParkingPriceReferenceSchema.model_validate(
             parking_price, from_attributes=True
+        )
+
+    async def list_parking_prices(
+        self,
+        company_id: str,
+    ) -> ListParkingPricesResponseSchema:
+        result = await self.db.execute(
+            select(ParkingPrice).where(
+                ParkingPrice.company_id == company_id,
+                ParkingPrice.active,
+            )
+        )
+        parking_prices = result.scalars().all()
+        total = len(parking_prices)
+        return ListParkingPricesResponseSchema(
+            total=total,
+            skip=0,
+            limit=total,
+            data=[
+                BaseParkingPriceSchema.model_validate(price, from_attributes=True)
+                for price in parking_prices
+            ],
         )

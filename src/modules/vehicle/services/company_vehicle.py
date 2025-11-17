@@ -101,10 +101,8 @@ class CompanyVehicleService(BaseService):
             raise errors.ResourceNotFound(message="Active vehicle entrance not found")
 
         vehicle_entrance.ended_at = ended_at
-        vehicle_entrance.total_price = (
-            math.ceil(
-                (ended_at - vehicle_entrance.entrance_date).total_seconds() / 3600
-            )
+        vehicle_entrance.total_price = math.floor(
+            ((ended_at - vehicle_entrance.entrance_date).total_seconds() / 3600)
             * vehicle_entrance.hourly_rate
         )
         self.db.add(vehicle_entrance)
@@ -120,7 +118,18 @@ class CompanyVehicleService(BaseService):
         limit: int = 100,
     ) -> list[ListActiveVehiclesResponseSchema]:
         vehicle_entrance_stmt = await self.db.execute(
-            select(VehicleEntrance)
+            select(
+                VehicleEntrance.id,
+                VehicleEntrance.active,
+                VehicleEntrance.vehicle_id,
+                VehicleEntrance.company_id,
+                VehicleEntrance.entrance_date,
+                VehicleEntrance.ended_at,
+                VehicleEntrance.hourly_rate,
+                VehicleEntrance.total_price,
+                Vehicle.plate.label("plate"),
+            )
+            .join(Vehicle, Vehicle.id == VehicleEntrance.vehicle_id)
             .where(
                 VehicleEntrance.company_id == company_id,
                 VehicleEntrance.ended_at.is_(None),
@@ -129,7 +138,7 @@ class CompanyVehicleService(BaseService):
             .offset(skip)
             .limit(limit)
         )
-        vehicle_entrances = vehicle_entrance_stmt.scalars().all()
+        vehicle_entrances = vehicle_entrance_stmt.all()
 
         vehicle_entrances_count_stmt = await self.db.execute(
             select(literal_column("COUNT(*)")).where(
@@ -159,7 +168,18 @@ class CompanyVehicleService(BaseService):
         limit: int = 100,
     ) -> list[ListActiveVehiclesResponseSchema]:
         vehicle_entrance_stmt = await self.db.execute(
-            select(VehicleEntrance)
+            select(
+                VehicleEntrance.id,
+                VehicleEntrance.active,
+                VehicleEntrance.vehicle_id,
+                VehicleEntrance.company_id,
+                VehicleEntrance.entrance_date,
+                VehicleEntrance.ended_at,
+                VehicleEntrance.hourly_rate,
+                VehicleEntrance.total_price,
+                Vehicle.plate.label("plate"),
+            )
+            .join(Vehicle, Vehicle.id == VehicleEntrance.vehicle_id)
             .where(
                 VehicleEntrance.company_id == company_id,
                 VehicleEntrance.active,
@@ -168,7 +188,7 @@ class CompanyVehicleService(BaseService):
             .limit(limit)
             .offset(skip)
         )
-        vehicle_entrances = vehicle_entrance_stmt.scalars().all()
+        vehicle_entrances = vehicle_entrance_stmt.all()
 
         vehicle_entrances_count_stmt = await self.db.execute(
             select(literal_column("COUNT(*)")).where(
