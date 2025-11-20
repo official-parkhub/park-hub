@@ -13,7 +13,8 @@ async def _can_manage_company(
     existing_company = await company_service.get_company_by_id(str(company_id))
     return current_user.is_admin or (
         existing_company.organization_id is not None
-        and existing_company.organization_id == current_user.organization_id
+        and current_user.organization is not None
+        and existing_company.organization_id == current_user.organization.id
     )
 
 

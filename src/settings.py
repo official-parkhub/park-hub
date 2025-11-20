@@ -17,6 +17,7 @@ class Settings(BaseSettings):
 
     # Auth
     auth_secret_key: str
+    auth_refresh_secret_key: str
 
     # Postgres
     postgres_user: str

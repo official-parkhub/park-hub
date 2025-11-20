@@ -22,6 +22,10 @@ class LoginResponseSchema(BaseModel):
     access_token: str
 
 
+class LoginResponseSchemaWithRefresh(LoginResponseSchema):
+    refresh_token: str
+
+
 class TokenData(BaseModel):
     user_id: str
     exp: int
