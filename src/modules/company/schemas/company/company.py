@@ -27,7 +27,7 @@ class ParkingPriceWithIDSchema(BaseParkingPriceSchema):
 class BaseParkingExceptionSchema(BaseModel):
     start_hour: int
     end_hour: int
-    description: str
+    description: str | None = None
     price_cents: int
     exception_date: date
 
