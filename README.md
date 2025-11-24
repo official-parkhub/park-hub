@@ -6,28 +6,13 @@ Este repositório contém a API backend do sistema.
 
 ---
 
-## ✨ Funcionalidades
-
-### Para Motoristas (Clientes)
-- ✅ Busca de estacionamentos por localidade com filtros.
-- ✅ Visualização de detalhes completos do estacionamento (preço, horário, fotos, serviços).
-- ✅ Acompanhamento em tempo real do tempo e valor da sessão de estacionamento ativa.
-- ✅ Histórico de utilização e pagamentos.
-
-### Para Gestores de Estacionamento
-- ✅ Dashboard com estatísticas financeiras e operacionais.
-- ✅ Gerenciamento de múltiplos estacionamentos e empresas.
-- ✅ Controle digital de entrada (check-in) e saída (check-out) de veículos.
-- ✅ Histórico completo de sessões do estacionamento.
-
----
-
 ## 🛠️ Tecnologias Utilizadas
 
 Este projeto foi construído utilizando as seguintes tecnologias:
 
 - **Backend:** Python (com FastAPI, Pydantic, SQLAlchemy)
 - **Banco de Dados:** PostgreSQL
+- **Blob Storage:** AWS S3 (LocalStack para uso local)
 - **Migrations:** Alembic
 - **Containerização:** Docker & Docker Compose
 - **Gerenciador de BD (GUI):** PgAdmin
@@ -69,6 +54,7 @@ Siga estas instruções para ter o projeto rodando em seu ambiente local para de
 
     # Auth variables
     AUTH_SECRET_KEY=secret
+    AUTH_REFRESH_SECRET_KEY=refresh_secret
 
     # Postgres variables
     POSTGRES_USER=parkhub
@@ -89,7 +75,12 @@ Siga estas instruções para ter o projeto rodando em seu ambiente local para de
     docker compose up -d
     ```
 
-4.  **Pronto!** A aplicação estará rodando:
+4. **Rode as migrations**
+    ```bash
+    sudo docker compose run --rm api alembic upgrade head
+    ```
+
+5.  **Pronto!** A aplicação estará rodando:
     - A API estará acessível em `http://localhost:8080`.
     - O PgAdmin estará acessível em `http://localhost:5050`.
 
