@@ -161,6 +161,30 @@ Para aplicar todas as migrations pendentes ao banco de dados e atualizar o schem
 docker compose run --rm api alembic upgrade head
 ```
 
+## Rodando os Testes
+
+Para executar os testes automatizados do projeto, utilize o seguinte comando:
+
+```bash
+make test
+# ou
+dotenv -f env/.env.test run pytest tests/
+```
+
+Observe que este comando deverá ser executado com o container de testes em execução, que pode ser iniciado com:
+
+```bash
+docker compose -f docker-compose.test.yml up -d
+```
+
+### Observação
+
+Lembre-se de estar com o ambiente virtual ativado antes de rodar os testes.
+
+```bash
+source .venv/bin/activate
+```
+
 ### Licença
 
 Este projeto está licenciado sob a Licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
