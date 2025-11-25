@@ -17,7 +17,10 @@ jobs:
     - name: Inject env file
       run: |
         echo "API_VERSION=${{ secrets.API_VERSION }}" > .env
+        echo "API_PORT=${{ secrets.API_PORT }}" >> .env
+        echo "POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}" >> .env
         echo "AUTH_SECRET_KEY=${{ secrets.AUTH_SECRET_KEY }}" >> .env
+        echo "API_RELOAD=${{ secrets.API_RELOAD }}" >> .env
         echo "AUTH_REFRESH_SECRET_KEY=${{ secrets.AUTH_REFRESH_SECRET_KEY }}" >> .env
         echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
         echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
@@ -26,5 +29,6 @@ jobs:
         echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> .env
         echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
         echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
+        echo "AWS_S3_ENDPOINT=${{ secrets.AWS_S3_ENDPOINT }}" >> .env
     - name: Run Docker Container
       run: sudo docker run -d -p 8080:8080 --name parkhub-container --env-file .env ${{ secrets.DOCKERHUB_REPO }}
