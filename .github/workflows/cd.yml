@@ -1,0 +1,30 @@
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+    - name: Pull Docker image
+      run: sudo docker pull ${{ secrets.DOCKERHUB_REPO }}:latest
+    - name: Delete Old docker container
+      run: sudo docker rm -f parkhub-container || true
+    - name: Inject env file
+      run: |
+        echo "API_VERSION=${{ secrets.API_VERSION }}" > .env
+        echo "AUTH_SECRET_KEY=${{ secrets.AUTH_SECRET_KEY }}" >> .env
+        echo "AUTH_REFRESH_SECRET_KEY=${{ secrets.AUTH_REFRESH_SECRET_KEY }}" >> .env
+        echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
+        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
+        echo "POSTGRES_DATABASE=${{ secrets.POSTGRES_DATABASE }}" >> .env
+        echo "POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}" >> .env
+        echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> .env
+        echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
+        echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
+    - name: Run Docker Container
+      run: sudo docker run -d -p 8080:8080 --name parkhub-container ${{ secrets.DOCKERHUB_REPO }}:latest --env-file .env
