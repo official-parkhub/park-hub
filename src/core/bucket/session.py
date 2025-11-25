@@ -12,13 +12,16 @@ client = None
 def get_client():
     global client
     if client is None:
-        client = boto3.client(
-            "s3",
-            aws_access_key_id=SETTINGS.aws_access_key_id,
-            aws_secret_access_key=SETTINGS.aws_secret_access_key,
-            region_name=SETTINGS.aws_region,
-            endpoint_url=getattr(SETTINGS, "aws_s3_endpoint", None),
-        )
+        if SETTINGS.aws_access_key_id is None:
+            client = boto3.client(
+                "s3",
+                aws_access_key_id=SETTINGS.aws_access_key_id,
+                aws_secret_access_key=SETTINGS.aws_secret_access_key,
+                region_name=SETTINGS.aws_region,
+                endpoint_url=getattr(SETTINGS, "aws_s3_endpoint", None),
+            )
+        else:
+            client = boto3.client("s3")
 
         for bucket in BucketNames:
             ensure_bucket_exists(client, bucket.value)

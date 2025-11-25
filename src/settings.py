@@ -30,8 +30,8 @@ class Settings(BaseSettings):
     sqlalchemy_echo: bool = False
 
     # S3 Storage
-    aws_access_key_id: str
-    aws_secret_access_key: str
+    aws_access_key_id: str | None = None
+    aws_secret_access_key: str | None = None
     aws_region: str = "us-east-1"
     aws_s3_endpoint: str | None = None
 
