@@ -27,4 +27,8 @@ jobs:
         echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
         echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
     - name: Run Docker Container
-      run: sudo docker run -d -p 8080:8080 --name parkhub-container ${{ secrets.DOCKERHUB_REPO }}:latest --env-file .env
+      run: sudo docker run -d \
+        -p 8080:8080 \
+        --name parkhub-container \
+        --env-file .env \
+        ${{ secrets.DOCKERHUB_REPO }}:latest
